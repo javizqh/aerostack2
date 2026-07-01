@@ -2,7 +2,7 @@
 ## This CMakeLists.txt file for rviz_plugin_tutorials builds the
 ## TeleopPanel, ImuDisplay, and PlantFlagTool tutorials.
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 4.2.3)
 project(as2_rviz_plugins)
 
 # Default to C++17

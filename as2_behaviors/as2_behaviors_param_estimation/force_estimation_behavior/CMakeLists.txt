@@ -1,5 +1,5 @@
 # Set executable name and version
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 4.2.3)
 set(SUBPROJECT_NAME  force_estimation_behavior)
 
 
