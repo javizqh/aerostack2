@@ -10,7 +10,8 @@
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
 //
-//    * Neither the name of the Universidad Politécnica de Madrid nor the names of its
+//    * Neither the name of the Universidad Politécnica de Madrid nor the names
+//    of its
 //      contributors may be used to endorse or promote products derived from
 //      this software without specific prior written permission.
 //
@@ -38,14 +39,13 @@
 #define AS2_ALPHANUMERIC_VIEWER__ALPHANUMERIC_VIEWER_HPP_
 
 #include <curses.h>
-#include <math.h>
-#include <stdio.h>
-#include <tf2/utils.h>
 #include <iostream>
+#include <math.h>
 #include <sstream>
+#include <stdio.h>
 #include <string>
+#include <tf2/utils.hpp>
 
-#include <rclcpp/rclcpp.hpp>
 #include "as2_core/names/actions.hpp"
 #include "as2_core/names/services.hpp"
 #include "as2_core/names/topics.hpp"
@@ -59,14 +59,14 @@
 #include "sensor_msgs/msg/imu.hpp"
 #include "sensor_msgs/msg/nav_sat_fix.hpp"
 #include "sensor_msgs/msg/temperature.hpp"
+#include <rclcpp/rclcpp.hpp>
 
 #define ASCII_KEY_UP 65
 #define ASCII_KEY_DOWN 66
 #define ASCII_KEY_RIGHT 67
 #define ASCII_KEY_LEFT 68
 
-class AlphanumericViewer : public as2::Node
-{
+class AlphanumericViewer : public as2::Node {
 public:
   AlphanumericViewer();
 
@@ -94,26 +94,37 @@ public:
   void printPlatformStatus(int line);
   void clearValues();
 
-  using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+  using CallbackReturn =
+      rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
   CallbackReturn on_configure(const rclcpp_lifecycle::State &) override;
   CallbackReturn on_deactivate(const rclcpp_lifecycle::State &) override;
   CallbackReturn on_shutdown(const rclcpp_lifecycle::State &) override;
 
 private:
-  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr self_localization_pose_sub_;
-  rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr self_localization_speed_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr
+      self_localization_pose_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr
+      self_localization_speed_sub_;
   rclcpp::Subscription<sensor_msgs::msg::BatteryState>::SharedPtr battery_sub_;
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
-  rclcpp::Subscription<sensor_msgs::msg::Temperature>::SharedPtr temperature_sub_;
+  rclcpp::Subscription<sensor_msgs::msg::Temperature>::SharedPtr
+      temperature_sub_;
   rclcpp::Subscription<as2_msgs::msg::PlatformInfo>::SharedPtr status_sub_;
-  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr actuator_command_pose_sub_;
-  rclcpp::Subscription<as2_msgs::msg::Thrust>::SharedPtr actuator_command_thrust_sub_;
-  rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr actuator_command_twist_sub_;
-  rclcpp::Subscription<as2_msgs::msg::ControllerInfo>::SharedPtr controller_info_sub_;
-  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr position_reference_sub_;
-  rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr speed_reference_sub_;
-  // rclcpp::Subscription <as2_msgs::msg::TrajectoryWaypoints>::SharedPtr trajectory_reference_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr
+      actuator_command_pose_sub_;
+  rclcpp::Subscription<as2_msgs::msg::Thrust>::SharedPtr
+      actuator_command_thrust_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr
+      actuator_command_twist_sub_;
+  rclcpp::Subscription<as2_msgs::msg::ControllerInfo>::SharedPtr
+      controller_info_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr
+      position_reference_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr
+      speed_reference_sub_;
+  // rclcpp::Subscription <as2_msgs::msg::TrajectoryWaypoints>::SharedPtr
+  // trajectory_reference_sub_;
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_sub_;
   rclcpp::Subscription<as2_msgs::msg::ControlMode>::SharedPtr control_mode_sub_;
 
@@ -129,7 +140,7 @@ private:
   geometry_msgs::msg::PoseStamped reference_pose_;
   geometry_msgs::msg::TwistStamped reference_twist_;
   sensor_msgs::msg::NavSatFix gps_;
-  int battery_mode_ = 0;  // 0: [0, 1], 1: [0, 100]
+  int battery_mode_ = 0; // 0: [0, 1], 1: [0, 100]
   // as2_msgs::msg::TrajectoryWaypoints reference_traj_;
 
   std::stringstream interface_printout_stream;
@@ -170,14 +181,19 @@ private:
   void batteryCallback(const sensor_msgs::msg::BatteryState::SharedPtr _msg);
   void imuCallback(const sensor_msgs::msg::Imu::SharedPtr _msg);
   void platformCallback(const as2_msgs::msg::PlatformInfo::SharedPtr _msg);
-  void actuatorPoseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr _msg);
+  void
+  actuatorPoseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr _msg);
   void actuatorThrustCallback(const as2_msgs::msg::Thrust::SharedPtr _msg);
-  void actuatorSpeedCallback(const geometry_msgs::msg::TwistStamped::SharedPtr _msg);
+  void
+  actuatorSpeedCallback(const geometry_msgs::msg::TwistStamped::SharedPtr _msg);
   void controllerCallback(const as2_msgs::msg::ControllerInfo::SharedPtr _msg);
-  void poseReferenceCallback(const geometry_msgs::msg::PoseStamped::SharedPtr _msg);
-  void speedReferenceCallback(const geometry_msgs::msg::TwistStamped::SharedPtr _msg);
+  void
+  poseReferenceCallback(const geometry_msgs::msg::PoseStamped::SharedPtr _msg);
+  void speedReferenceCallback(
+      const geometry_msgs::msg::TwistStamped::SharedPtr _msg);
   void gpsCallback(const sensor_msgs::msg::NavSatFix::SharedPtr _msg);
-  // void trajectoryReferenceCallback (const as2_msgs::msg::TrajectoryWaypoints::SharedPtr _msg);
+  // void trajectoryReferenceCallback (const
+  // as2_msgs::msg::TrajectoryWaypoints::SharedPtr _msg);
 };
 
-#endif  // AS2_ALPHANUMERIC_VIEWER__ALPHANUMERIC_VIEWER_HPP_
+#endif // AS2_ALPHANUMERIC_VIEWER__ALPHANUMERIC_VIEWER_HPP_

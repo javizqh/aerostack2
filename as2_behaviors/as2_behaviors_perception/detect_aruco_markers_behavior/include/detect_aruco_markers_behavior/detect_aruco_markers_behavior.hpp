@@ -10,7 +10,8 @@
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
 //
-//    * Neither the name of the Universidad Politécnica de Madrid nor the names of its
+//    * Neither the name of the Universidad Politécnica de Madrid nor the names
+//    of its
 //      contributors may be used to endorse or promote products derived from
 //      this software without specific prior written permission.
 //
@@ -37,13 +38,12 @@
 #ifndef DETECT_ARUCO_MARKERS_BEHAVIOR__DETECT_ARUCO_MARKERS_BEHAVIOR_HPP_
 #define DETECT_ARUCO_MARKERS_BEHAVIOR__DETECT_ARUCO_MARKERS_BEHAVIOR_HPP_
 
-#include <tf2/LinearMath/Quaternion.h>
 #include <Eigen/Dense>
 #include <memory>
 #include <string>
+#include <tf2/LinearMath/Quaternion.hpp>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
 #include "as2_behavior/behavior_server.hpp"
 #include "as2_core/custom/cv_bridge.hpp"
 #include "as2_core/names/topics.hpp"
@@ -52,6 +52,7 @@
 #include "as2_msgs/action/detect_aruco_markers.hpp"
 #include "as2_msgs/msg/pose_stamped_with_id.hpp"
 #include "as2_msgs/msg/pose_stamped_with_id_array.hpp"
+#include <rclcpp/rclcpp.hpp>
 
 #include "sensor_msgs/image_encodings.hpp"
 #include "sensor_msgs/msg/image.hpp"
@@ -60,9 +61,8 @@
 #include <opencv2/aruco.hpp>
 #include <opencv2/calib3d.hpp>
 
-class DetectArucoMarkersBehavior
-  : public as2_behavior::BehaviorServer<as2_msgs::action::DetectArucoMarkers>
-{
+class DetectArucoMarkersBehavior : public as2_behavior::BehaviorServer<
+                                       as2_msgs::action::DetectArucoMarkers> {
 public:
   /**
    * @brief Construct a new Aruco Detector object
@@ -77,7 +77,8 @@ public:
 private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr cam_image_sub_;
   rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr cam_info_sub_;
-  rclcpp::Publisher<as2_msgs::msg::PoseStampedWithIDArray>::SharedPtr aruco_pose_pub_;
+  rclcpp::Publisher<as2_msgs::msg::PoseStampedWithIDArray>::SharedPtr
+      aruco_pose_pub_;
   std::shared_ptr<as2::sensors::Camera> aruco_img_transport_;
 
   std::vector<uint16_t> target_ids_;
@@ -95,7 +96,7 @@ private:
 
   void loadParameters();
   void setup();
-  void setCameraParameters(const sensor_msgs::msg::CameraInfo & _camera_info);
+  void setCameraParameters(const sensor_msgs::msg::CameraInfo &_camera_info);
   bool checkIdIsTarget(const int _id);
 
 public:
@@ -104,24 +105,31 @@ public:
 
 private:
   /** As2 Behavior methods **/
-  bool on_activate(std::shared_ptr<const as2_msgs::action::DetectArucoMarkers::Goal> goal) override;
+  bool on_activate(
+      std::shared_ptr<const as2_msgs::action::DetectArucoMarkers::Goal> goal)
+      override;
 
-  bool on_modify(std::shared_ptr<const as2_msgs::action::DetectArucoMarkers::Goal> goal) override;
+  bool on_modify(
+      std::shared_ptr<const as2_msgs::action::DetectArucoMarkers::Goal> goal)
+      override;
 
-  bool on_deactivate(const std::shared_ptr<std::string> & message) override;
+  bool on_deactivate(const std::shared_ptr<std::string> &message) override;
 
-  bool on_pause(const std::shared_ptr<std::string> & message) override;
+  bool on_pause(const std::shared_ptr<std::string> &message) override;
 
-  bool on_resume(const std::shared_ptr<std::string> & message) override;
+  bool on_resume(const std::shared_ptr<std::string> &message) override;
 
-  as2_behavior::ExecutionStatus on_run(
-    const std::shared_ptr<const as2_msgs::action::DetectArucoMarkers::Goal> & goal,
-    std::shared_ptr<as2_msgs::action::DetectArucoMarkers::Feedback> & feedback_msg,
-    std::shared_ptr<as2_msgs::action::DetectArucoMarkers::Result> & result_msg) override;
+  as2_behavior::ExecutionStatus
+  on_run(const std::shared_ptr<const as2_msgs::action::DetectArucoMarkers::Goal>
+             &goal,
+         std::shared_ptr<as2_msgs::action::DetectArucoMarkers::Feedback>
+             &feedback_msg,
+         std::shared_ptr<as2_msgs::action::DetectArucoMarkers::Result>
+             &result_msg) override;
 
-  void on_execution_end(const as2_behavior::ExecutionStatus & state) override;
+  void on_execution_end(const as2_behavior::ExecutionStatus &state) override;
 };
 
-std::string targetIds2string(const std::vector<uint16_t> & target_ids);
+std::string targetIds2string(const std::vector<uint16_t> &target_ids);
 
-#endif  // DETECT_ARUCO_MARKERS_BEHAVIOR__DETECT_ARUCO_MARKERS_BEHAVIOR_HPP_
+#endif // DETECT_ARUCO_MARKERS_BEHAVIOR__DETECT_ARUCO_MARKERS_BEHAVIOR_HPP_

@@ -10,7 +10,8 @@
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
 //
-//    * Neither the name of the Universidad Politécnica de Madrid nor the names of its
+//    * Neither the name of the Universidad Politécnica de Madrid nor the names
+//    of its
 //      contributors may be used to endorse or promote products derived from
 //      this software without specific prior written permission.
 //
@@ -37,7 +38,7 @@
  * @authors Rafael Perez-Segui
  */
 
-#include <tf2/exceptions.h>
+#include <tf2/exceptions.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -59,48 +60,44 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
-namespace follow_reference_plugin_trajectory
-{
+namespace follow_reference_plugin_trajectory {
 
 // Stable id used to refer to the single follow-reference waypoint
 constexpr char kFollowReferenceWaypointId[] = "follow_reference_target";
 
-class Plugin : public follow_reference_base::FollowReferenceBase
-{
+class Plugin : public follow_reference_base::FollowReferenceBase {
   using TrajectoryGeneratorAction =
-    as2_msgs::action::GeneratePolynomialTrajectory;
+      as2_msgs::action::GeneratePolynomialTrajectory;
   using GoalHandleTrajectoryGenerator =
-    rclcpp_action::ClientGoalHandle<TrajectoryGeneratorAction>;
+      rclcpp_action::ClientGoalHandle<TrajectoryGeneratorAction>;
 
 public:
-  void ownInit() override
-  {
+  void ownInit() override {
     traj_gen_client_ = rclcpp_action::create_client<TrajectoryGeneratorAction>(
-      node_ptr_, as2_names::actions::behaviors::trajectorygenerator);
+        node_ptr_, as2_names::actions::behaviors::trajectorygenerator);
 
     traj_gen_pause_client_ =
-      std::make_shared<as2::SynchronousServiceClient<std_srvs::srv::Trigger>>(
-      std::string(as2_names::actions::behaviors::trajectorygenerator) +
-      "/_behavior/pause",
-      node_ptr_);
+        std::make_shared<as2::SynchronousServiceClient<std_srvs::srv::Trigger>>(
+            std::string(as2_names::actions::behaviors::trajectorygenerator) +
+                "/_behavior/pause",
+            node_ptr_);
 
     traj_gen_resume_client_ =
-      std::make_shared<as2::SynchronousServiceClient<std_srvs::srv::Trigger>>(
-      std::string(as2_names::actions::behaviors::trajectorygenerator) +
-      "/_behavior/resume",
-      node_ptr_);
+        std::make_shared<as2::SynchronousServiceClient<std_srvs::srv::Trigger>>(
+            std::string(as2_names::actions::behaviors::trajectorygenerator) +
+                "/_behavior/resume",
+            node_ptr_);
 
     modify_pub_ =
-      node_ptr_->create_publisher<as2_msgs::msg::PoseStampedWithIDArray>(
-      as2_names::topics::motion_reference::modify_waypoint,
-      as2_names::topics::motion_reference::qos_waypoint);
+        node_ptr_->create_publisher<as2_msgs::msg::PoseStampedWithIDArray>(
+            as2_names::topics::motion_reference::modify_waypoint,
+            as2_names::topics::motion_reference::qos_waypoint);
 
     traj_gen_goal_options_.feedback_callback =
-      std::bind(
-      &Plugin::feedback_callback, this,
-      std::placeholders::_1, std::placeholders::_2);
+        std::bind(&Plugin::feedback_callback, this, std::placeholders::_1,
+                  std::placeholders::_2);
     traj_gen_goal_options_.result_callback =
-      std::bind(&Plugin::result_callback, this, std::placeholders::_1);
+        std::bind(&Plugin::result_callback, this, std::placeholders::_1);
 
     // Reactive-modify configuration. The plugin keeps the target anchored in
     // "earth" and re-emits modify_waypoint messages only when the live target
@@ -109,17 +106,15 @@ public:
     // Defaults: threshold=0 (any change triggers modify), frequency=0 (no
     // rate-limit). Raise them to filter TF noise or cap the modify rate.
     modify_threshold_ = declareAndGetDouble(
-      "follow_reference_plugin_trajectory.modify_threshold", 0.0);
+        "follow_reference_plugin_trajectory.modify_threshold", 0.0);
     modify_frequency_ = declareAndGetDouble(
-      "follow_reference_plugin_trajectory.modify_frequency", 0.0);
+        "follow_reference_plugin_trajectory.modify_frequency", 0.0);
   }
 
-  bool own_activate(as2_msgs::action::FollowReference::Goal & _goal) override
-  {
+  bool own_activate(as2_msgs::action::FollowReference::Goal &_goal) override {
     if (!traj_gen_client_->wait_for_action_server(std::chrono::seconds(2))) {
-      RCLCPP_ERROR(
-        node_ptr_->get_logger(),
-        "Trajectory generator action server not available");
+      RCLCPP_ERROR(node_ptr_->get_logger(),
+                   "Trajectory generator action server not available");
       return false;
     }
 
@@ -140,33 +135,28 @@ public:
     last_modify_time_ = node_ptr_->now();
 
     auto traj_generator_goal =
-      followReferenceGoalToTrajectoryGoal(_goal, target_in_earth);
+        followReferenceGoalToTrajectoryGoal(_goal, target_in_earth);
 
-    RCLCPP_INFO(
-      node_ptr_->get_logger(),
-      "FollowReference[trajectory] target (earth): %f, %f, %f",
-      traj_generator_goal.path[0].pose.pose.position.x,
-      traj_generator_goal.path[0].pose.pose.position.y,
-      traj_generator_goal.path[0].pose.pose.position.z);
-    RCLCPP_INFO(
-      node_ptr_->get_logger(),
-      "FollowReference[trajectory] yaw mode: %d, max_speed: %.3f",
-      traj_generator_goal.yaw.mode,
-      traj_generator_goal.max_speed);
+    RCLCPP_INFO(node_ptr_->get_logger(),
+                "FollowReference[trajectory] target (earth): %f, %f, %f",
+                traj_generator_goal.path[0].pose.pose.position.x,
+                traj_generator_goal.path[0].pose.pose.position.y,
+                traj_generator_goal.path[0].pose.pose.position.z);
+    RCLCPP_INFO(node_ptr_->get_logger(),
+                "FollowReference[trajectory] yaw mode: %d, max_speed: %.3f",
+                traj_generator_goal.yaw.mode, traj_generator_goal.max_speed);
 
     traj_gen_goal_handle_future_ = traj_gen_client_->async_send_goal(
-      traj_generator_goal, traj_gen_goal_options_);
+        traj_generator_goal, traj_gen_goal_options_);
     if (!traj_gen_goal_handle_future_.valid()) {
-      RCLCPP_ERROR(
-        node_ptr_->get_logger(),
-        "FollowReference[trajectory]: request could not be sent");
+      RCLCPP_ERROR(node_ptr_->get_logger(),
+                   "FollowReference[trajectory]: request could not be sent");
       return false;
     }
     return true;
   }
 
-  bool own_modify(as2_msgs::action::FollowReference::Goal & _goal) override
-  {
+  bool own_modify(as2_msgs::action::FollowReference::Goal &_goal) override {
     // Convert to earth before publishing so the trajectory generator always
     // sees a static-frame waypoint. The reactive-modify loop in own_run()
     // keeps the cache (last_target_in_earth_) coherent so frame-drift
@@ -177,18 +167,15 @@ public:
     }
     publishModifyInEarth(target_in_earth);
 
-    RCLCPP_INFO(
-      node_ptr_->get_logger(),
-      "FollowReference[trajectory] modify target (earth): %f, %f, %f",
-      target_in_earth.point.x, target_in_earth.point.y,
-      target_in_earth.point.z);
+    RCLCPP_INFO(node_ptr_->get_logger(),
+                "FollowReference[trajectory] modify target (earth): %f, %f, %f",
+                target_in_earth.point.x, target_in_earth.point.y,
+                target_in_earth.point.z);
     return true;
   }
 
-  bool own_deactivate(const std::shared_ptr<std::string> & message) override
-  {
-    RCLCPP_INFO(
-      node_ptr_->get_logger(), "FollowReference[trajectory] cancel");
+  bool own_deactivate(const std::shared_ptr<std::string> &message) override {
+    RCLCPP_INFO(node_ptr_->get_logger(), "FollowReference[trajectory] cancel");
     cancel_requested_ = true;
     if (traj_gen_goal_handle_future_.valid()) {
       // Same cancel pattern as the other trajectory plugins
@@ -199,28 +186,29 @@ public:
     return true;
   }
 
-  bool own_pause(const std::shared_ptr<std::string> & message) override
-  {
+  bool own_pause(const std::shared_ptr<std::string> &message) override {
     RCLCPP_INFO(node_ptr_->get_logger(), "FollowReference[trajectory] paused");
     std_srvs::srv::Trigger::Request req;
     std_srvs::srv::Trigger::Response resp;
     auto out = traj_gen_pause_client_->sendRequest(req, resp, 3);
-    if (out && resp.success) {return true;}
+    if (out && resp.success) {
+      return true;
+    }
     return false;
   }
 
-  bool own_resume(const std::shared_ptr<std::string> & message) override
-  {
+  bool own_resume(const std::shared_ptr<std::string> &message) override {
     RCLCPP_INFO(node_ptr_->get_logger(), "FollowReference[trajectory] resumed");
     std_srvs::srv::Trigger::Request req;
     std_srvs::srv::Trigger::Response resp;
     auto out = traj_gen_resume_client_->sendRequest(req, resp, 3);
-    if (out && resp.success) {return true;}
+    if (out && resp.success) {
+      return true;
+    }
     return false;
   }
 
-  void own_execution_end(const as2_behavior::ExecutionStatus & state) override
-  {
+  void own_execution_end(const as2_behavior::ExecutionStatus &state) override {
     RCLCPP_INFO(node_ptr_->get_logger(), "FollowReference[trajectory] end");
     sendHover();
     traj_gen_goal_accepted_ = false;
@@ -230,8 +218,7 @@ public:
     return;
   }
 
-  as2_behavior::ExecutionStatus own_run() override
-  {
+  as2_behavior::ExecutionStatus own_run() override {
     // External cancel requested: report SUCCESS so the behavior server
     // emits an ABORTED state machine transition rather than FAILURE.
     if (cancel_requested_) {
@@ -241,27 +228,24 @@ public:
 
     if (!traj_gen_goal_accepted_) {
       if (traj_gen_goal_handle_future_.valid() &&
-        traj_gen_goal_handle_future_.wait_for(std::chrono::seconds(0)) ==
-        std::future_status::ready)
-      {
+          traj_gen_goal_handle_future_.wait_for(std::chrono::seconds(0)) ==
+              std::future_status::ready) {
         auto goal_handle = traj_gen_goal_handle_future_.get();
         if (goal_handle) {
-          RCLCPP_INFO(
-            node_ptr_->get_logger(),
-            "Trajectory generator goal accepted");
+          RCLCPP_INFO(node_ptr_->get_logger(),
+                      "Trajectory generator goal accepted");
           traj_gen_goal_accepted_ = true;
         } else {
-          RCLCPP_ERROR(
-            node_ptr_->get_logger(),
-            "Trajectory generator goal was rejected");
+          RCLCPP_ERROR(node_ptr_->get_logger(),
+                       "Trajectory generator goal was rejected");
           result_.follow_reference_success = false;
           return as2_behavior::ExecutionStatus::FAILURE;
         }
       } else {
-        auto & clk = *node_ptr_->get_clock();
+        auto &clk = *node_ptr_->get_clock();
         RCLCPP_INFO_THROTTLE(
-          node_ptr_->get_logger(), clk, 5000,
-          "Waiting for trajectory generator goal to be accepted");
+            node_ptr_->get_logger(), clk, 5000,
+            "Waiting for trajectory generator goal to be accepted");
         return as2_behavior::ExecutionStatus::RUNNING;
       }
     }
@@ -271,14 +255,13 @@ public:
       // by itself. Receiving a result while we have not cancelled means
       // something failed downstream.
       RCLCPP_WARN(
-        node_ptr_->get_logger(),
-        "Trajectory generator returned a result while follow_reference was "
-        "expected to keep running (success=%d). Reporting failure.",
-        traj_gen_result_);
+          node_ptr_->get_logger(),
+          "Trajectory generator returned a result while follow_reference was "
+          "expected to keep running (success=%d). Reporting failure.",
+          traj_gen_result_);
       result_.follow_reference_success = traj_gen_result_;
-      return traj_gen_result_ ?
-             as2_behavior::ExecutionStatus::SUCCESS :
-             as2_behavior::ExecutionStatus::FAILURE;
+      return traj_gen_result_ ? as2_behavior::ExecutionStatus::SUCCESS
+                              : as2_behavior::ExecutionStatus::FAILURE;
     }
 
     // Reactive modify: re-evaluate the live target in earth. If it has
@@ -292,16 +275,15 @@ public:
   }
 
   void feedback_callback(
-    GoalHandleTrajectoryGenerator::SharedPtr,
-    const std::shared_ptr<const TrajectoryGeneratorAction::Feedback> feedback)
-  {
+      GoalHandleTrajectoryGenerator::SharedPtr,
+      const std::shared_ptr<const TrajectoryGeneratorAction::Feedback>
+          feedback) {
     traj_gen_feedback_ = *feedback;
     return;
   }
 
-  void result_callback(
-    const GoalHandleTrajectoryGenerator::WrappedResult & result)
-  {
+  void
+  result_callback(const GoalHandleTrajectoryGenerator::WrappedResult &result) {
     traj_gen_result_received_ = true;
     if (result.result) {
       traj_gen_result_ = result.result->trajectory_generator_success;
@@ -313,17 +295,17 @@ public:
 
 private:
   std::shared_ptr<rclcpp_action::Client<TrajectoryGeneratorAction>>
-  traj_gen_client_ = nullptr;
+      traj_gen_client_ = nullptr;
   as2::SynchronousServiceClient<std_srvs::srv::Trigger>::SharedPtr
-    traj_gen_pause_client_ = nullptr;
+      traj_gen_pause_client_ = nullptr;
   as2::SynchronousServiceClient<std_srvs::srv::Trigger>::SharedPtr
-    traj_gen_resume_client_ = nullptr;
+      traj_gen_resume_client_ = nullptr;
   rclcpp::Publisher<as2_msgs::msg::PoseStampedWithIDArray>::SharedPtr
-    modify_pub_ = nullptr;
+      modify_pub_ = nullptr;
   rclcpp_action::Client<TrajectoryGeneratorAction>::SendGoalOptions
-    traj_gen_goal_options_;
+      traj_gen_goal_options_;
   std::shared_future<GoalHandleTrajectoryGenerator::SharedPtr>
-  traj_gen_goal_handle_future_;
+      traj_gen_goal_handle_future_;
   TrajectoryGeneratorAction::Feedback traj_gen_feedback_;
 
   bool traj_gen_goal_accepted_ = false;
@@ -338,56 +320,51 @@ private:
   geometry_msgs::msg::PointStamped last_target_in_earth_;
   rclcpp::Time last_modify_time_;
 
-  double declareAndGetDouble(
-    const std::string & param_name, double default_value)
-  {
+  double declareAndGetDouble(const std::string &param_name,
+                             double default_value) {
     if (!node_ptr_->has_parameter(param_name)) {
       node_ptr_->declare_parameter<double>(param_name, default_value);
     }
     return node_ptr_->get_parameter(param_name).as_double();
   }
 
-  bool tryConvertTargetToEarth(
-    const geometry_msgs::msg::PointStamped & target,
-    geometry_msgs::msg::PointStamped & out)
-  {
+  bool tryConvertTargetToEarth(const geometry_msgs::msg::PointStamped &target,
+                               geometry_msgs::msg::PointStamped &out) {
     // Refresh the stamp so the TF lookup uses the most recent transform
     geometry_msgs::msg::PointStamped stamped = target;
     stamped.header.stamp = node_ptr_->now();
     try {
       out = tf_handler_->convert(stamped, "earth");
       return true;
-    } catch (const tf2::TransformException & ex) {
+    } catch (const tf2::TransformException &ex) {
       RCLCPP_ERROR(
-        node_ptr_->get_logger(),
-        "FollowReference[trajectory]: could not transform target from '%s' "
-        "to 'earth': %s",
-        target.header.frame_id.c_str(), ex.what());
+          node_ptr_->get_logger(),
+          "FollowReference[trajectory]: could not transform target from '%s' "
+          "to 'earth': %s",
+          target.header.frame_id.c_str(), ex.what());
       return false;
     }
   }
 
   void publishModifyInEarth(
-    const geometry_msgs::msg::PointStamped & target_in_earth)
-  {
+      const geometry_msgs::msg::PointStamped &target_in_earth) {
     as2_msgs::msg::PoseStampedWithIDArray msg;
     msg.poses.resize(1);
-    auto & wp = msg.poses.front();
+    auto &wp = msg.poses.front();
     wp.id = kFollowReferenceWaypointId;
     wp.pose.header = target_in_earth.header;
     wp.pose.pose.position.x = target_in_earth.point.x;
     wp.pose.pose.position.y = target_in_earth.point.y;
     wp.pose.pose.position.z = target_in_earth.point.z;
-    wp.pose.pose.orientation.w = 1.0;  // Identity; the trajectory generator
-                                       // uses YawMode, not pose orientation.
+    wp.pose.pose.orientation.w = 1.0; // Identity; the trajectory generator
+                                      // uses YawMode, not pose orientation.
     modify_pub_->publish(msg);
 
     last_target_in_earth_ = target_in_earth;
     last_modify_time_ = node_ptr_->now();
   }
 
-  void reactiveModifyTick()
-  {
+  void reactiveModifyTick() {
     // Rate-limit gate.
     if (modify_frequency_ > 0.0) {
       const double min_period = 1.0 / modify_frequency_;
@@ -402,12 +379,12 @@ private:
     geometry_msgs::msg::PointStamped current_in_earth;
     try {
       current_in_earth = tf_handler_->convert(target, "earth");
-    } catch (const tf2::TransformException & ex) {
+    } catch (const tf2::TransformException &ex) {
       RCLCPP_WARN_THROTTLE(
-        node_ptr_->get_logger(), *node_ptr_->get_clock(), 5000,
-        "FollowReference[trajectory]: TF lookup failed during reactive "
-        "modify: %s",
-        ex.what());
+          node_ptr_->get_logger(), *node_ptr_->get_clock(), 5000,
+          "FollowReference[trajectory]: TF lookup failed during reactive "
+          "modify: %s",
+          ex.what());
       return;
     }
 
@@ -424,14 +401,13 @@ private:
   // get the closest behavior to the requested envelope (the generator
   // distributes that single speed across the polynomial axes internally).
   TrajectoryGeneratorAction::Goal followReferenceGoalToTrajectoryGoal(
-    const as2_msgs::action::FollowReference::Goal & _goal,
-    const geometry_msgs::msg::PointStamped & target_in_earth)
-  {
+      const as2_msgs::action::FollowReference::Goal &_goal,
+      const geometry_msgs::msg::PointStamped &target_in_earth) {
     TrajectoryGeneratorAction::Goal out;
     out.stamp = node_ptr_->now();
     out.yaw = _goal.yaw;
     out.max_speed = static_cast<float>(
-      std::max({_goal.max_speed_x, _goal.max_speed_y, _goal.max_speed_z}));
+        std::max({_goal.max_speed_x, _goal.max_speed_y, _goal.max_speed_z}));
     out.start_on_paused = false;
     out.follow_reference_mode = true;
 
@@ -445,11 +421,10 @@ private:
     out.path.emplace_back(wp);
     return out;
   }
-};  // Plugin class
-}  // namespace follow_reference_plugin_trajectory
+}; // Plugin class
+} // namespace follow_reference_plugin_trajectory
 
 #include <pluginlib/class_list_macros.hpp>
 
-PLUGINLIB_EXPORT_CLASS(
-  follow_reference_plugin_trajectory::Plugin,
-  follow_reference_base::FollowReferenceBase)
+PLUGINLIB_EXPORT_CLASS(follow_reference_plugin_trajectory::Plugin,
+                       follow_reference_base::FollowReferenceBase)

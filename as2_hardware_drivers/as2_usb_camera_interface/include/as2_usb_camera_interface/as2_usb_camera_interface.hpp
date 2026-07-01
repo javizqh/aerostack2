@@ -10,7 +10,8 @@
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
 //
-//    * Neither the name of the Universidad Politécnica de Madrid nor the names of its
+//    * Neither the name of the Universidad Politécnica de Madrid nor the names
+//    of its
 //      contributors may be used to endorse or promote products derived from
 //      this software without specific prior written permission.
 //
@@ -27,31 +28,30 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 /**
-* @file as2_usb_camera_interface.hpp
-*
-* @brief Class definition for the USB camera interface node
-*
-* @authors David Perez Saura, Miguel Fernandez Cortizas
-*/
+ * @file as2_usb_camera_interface.hpp
+ *
+ * @brief Class definition for the USB camera interface node
+ *
+ * @authors David Perez Saura, Miguel Fernandez Cortizas
+ */
 
 #ifndef AS2_USB_CAMERA_INTERFACE__AS2_USB_CAMERA_INTERFACE_HPP_
 #define AS2_USB_CAMERA_INTERFACE__AS2_USB_CAMERA_INTERFACE_HPP_
 
-#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Quaternion.hpp>
 
-#include <vector>
 #include <memory>
 #include <string>
+#include <vector>
 
-#include <rclcpp/rclcpp.hpp>
 #include "as2_core/custom/cv_bridge.hpp"
 #include "as2_core/names/topics.hpp"
 #include "as2_core/node.hpp"
 #include "as2_core/sensor.hpp"
+#include <rclcpp/rclcpp.hpp>
 
 #include "sensor_msgs/image_encodings.hpp"
 #include "sensor_msgs/msg/image.hpp"
-
 
 #include <image_transport/image_transport.hpp>
 #include <opencv2/calib3d.hpp>
@@ -59,17 +59,15 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 
+namespace usb_camera_interface {
 
-namespace usb_camera_interface
-{
-
-class UsbCameraInterface : public as2::Node
-{
+class UsbCameraInterface : public as2::Node {
 public:
   /**
    * @brief Construct a new UsbCameraInterface object
    */
-  explicit UsbCameraInterface(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+  explicit UsbCameraInterface(
+      const rclcpp::NodeOptions &options = rclcpp::NodeOptions());
 
   /**
    * @brief Destroy the UsbCameraInterface object
@@ -85,6 +83,6 @@ private:
   void setupCamera();
 };
 
-}  // namespace usb_camera_interface
+} // namespace usb_camera_interface
 
-#endif  // AS2_USB_CAMERA_INTERFACE__AS2_USB_CAMERA_INTERFACE_HPP_
+#endif // AS2_USB_CAMERA_INTERFACE__AS2_USB_CAMERA_INTERFACE_HPP_

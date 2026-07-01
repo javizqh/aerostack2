@@ -10,7 +10,8 @@
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
 //
-//    * Neither the name of the Universidad Politécnica de Madrid nor the names of its
+//    * Neither the name of the Universidad Politécnica de Madrid nor the names
+//    of its
 //      contributors may be used to endorse or promote products derived from
 //      this software without specific prior written permission.
 //
@@ -35,22 +36,21 @@
 #ifndef UTILS_HPP_
 #define UTILS_HPP_
 
-#include <tf2/convert.h>
+#include <tf2/convert.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
 #include <memory>
 #include <string>
 
+#include "cell_node.hpp"
 #include <geometry_msgs/msg/point_stamped.hpp>
 #include <nav_msgs/msg/map_meta_data.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-#include "cell_node.hpp"
 
-namespace utils
-{
+namespace utils {
 
 /**
  * @brief Convert a point to a cell in the occupancy grid
@@ -59,20 +59,21 @@ namespace utils
  * @param target_frame_id target frame id
  * @param tf_buffer tf buffer
  */
-Point2i pointToCell(
-  geometry_msgs::msg::PointStamped point,
-  nav_msgs::msg::MapMetaData map_info, std::string target_frame_id,
-  std::shared_ptr<tf2_ros::Buffer> tf_buffer)
-{
+Point2i pointToCell(geometry_msgs::msg::PointStamped point,
+                    nav_msgs::msg::MapMetaData map_info,
+                    std::string target_frame_id,
+                    std::shared_ptr<tf2_ros::Buffer> tf_buffer) {
   geometry_msgs::msg::PointStamped out;
   geometry_msgs::msg::TransformStamped transform = tf_buffer->lookupTransform(
-    target_frame_id, point.header.frame_id, point.header.stamp,
-    rclcpp::Duration::from_seconds(0.5));
+      target_frame_id, point.header.frame_id, point.header.stamp,
+      rclcpp::Duration::from_seconds(0.5));
   tf2::doTransform(point, out, transform);
 
   Point2i cell;
-  cell.x = static_cast<int>((out.point.x - map_info.origin.position.x) / map_info.resolution);
-  cell.y = static_cast<int>((out.point.y - map_info.origin.position.y) / map_info.resolution);
+  cell.x = static_cast<int>((out.point.x - map_info.origin.position.x) /
+                            map_info.resolution);
+  cell.y = static_cast<int>((out.point.y - map_info.origin.position.y) /
+                            map_info.resolution);
   return cell;
 }
 
@@ -83,11 +84,10 @@ Point2i pointToCell(
  * @param target_frame_id target frame id
  * @param tf_buffer tf buffer
  */
-Point2i poseToCell(
-  geometry_msgs::msg::PoseStamped pose,
-  nav_msgs::msg::MapMetaData map_info, std::string target_frame_id,
-  std::shared_ptr<tf2_ros::Buffer> tf_buffer)
-{
+Point2i poseToCell(geometry_msgs::msg::PoseStamped pose,
+                   nav_msgs::msg::MapMetaData map_info,
+                   std::string target_frame_id,
+                   std::shared_ptr<tf2_ros::Buffer> tf_buffer) {
   geometry_msgs::msg::PointStamped point;
   point.header = pose.header;
   point.point = pose.pose.position;
@@ -101,16 +101,15 @@ Point2i poseToCell(
  * @param map_info occupancy grid metadata
  * @param map_header occupancy grid header
  */
-geometry_msgs::msg::PointStamped cellToPoint(
-  int cell_x, int cell_y, nav_msgs::msg::MapMetaData map_info,
-  std_msgs::msg::Header map_header)
-{
+geometry_msgs::msg::PointStamped
+cellToPoint(int cell_x, int cell_y, nav_msgs::msg::MapMetaData map_info,
+            std_msgs::msg::Header map_header) {
   geometry_msgs::msg::PointStamped point;
   point.header = map_header;
   point.point.x = cell_x * map_info.resolution + map_info.origin.position.x -
-    map_info.resolution / 2;               // middle of cell
+                  map_info.resolution / 2; // middle of cell
   point.point.y = cell_y * map_info.resolution + map_info.origin.position.y -
-    map_info.resolution / 2;               // middle of cell
+                  map_info.resolution / 2; // middle of cell
   return point;
 }
 
@@ -120,12 +119,11 @@ geometry_msgs::msg::PointStamped cellToPoint(
  * @param map_info occupancy grid metadata
  * @param map_header occupancy grid header
  */
-geometry_msgs::msg::PointStamped cellToPoint(
-  Point2i cell, nav_msgs::msg::MapMetaData map_info,
-  std_msgs::msg::Header map_header)
-{
+geometry_msgs::msg::PointStamped
+cellToPoint(Point2i cell, nav_msgs::msg::MapMetaData map_info,
+            std_msgs::msg::Header map_header) {
   return cellToPoint(cell.x, cell.y, map_info, map_header);
 }
-}  // namespace utils
+} // namespace utils
 
-#endif  // UTILS_HPP_
+#endif // UTILS_HPP_
