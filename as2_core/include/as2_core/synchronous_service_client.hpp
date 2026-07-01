@@ -43,7 +43,6 @@
 
 #include "as2_core/node.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include <rclcpp/qos.hpp>
 
 namespace as2 {
 
@@ -75,8 +74,10 @@ public:
         rclcpp::CallbackGroupType::MutuallyExclusive, false);
     callback_group_executor_.add_callback_group(
         callback_group_, node_->get_node_base_interface());
-    service_client_ = node_->create_client<ServiceT>(
-        service_name, rmw_qos_profile_services_default, callback_group_);
+    // BUG: remove QoS rmw_qos_profile_services_default -> causes compilation
+    // error
+    service_client_ =
+        node_->create_client<ServiceT>(service_name, callback_group_);
   }
 
   /**
