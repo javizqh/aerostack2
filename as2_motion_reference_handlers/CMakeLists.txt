@@ -61,7 +61,6 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   rclcpp::rclcpp
-  rclpy::rclpy
   as2_core::as2_core
   as2_msgs::as2_msgs
   std_srvs::std_srvs
