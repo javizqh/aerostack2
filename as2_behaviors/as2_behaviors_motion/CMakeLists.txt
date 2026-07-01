@@ -200,6 +200,7 @@ add_library(follow_path_component SHARED
 target_link_libraries(follow_path_component
   pluginlib::pluginlib
   rclcpp::rclcpp
+  rclcpp_components::rclcpp_components
   rclcpp_action::rclcpp_action
   as2_core::as2_core
   as2_msgs::as2_msgs
