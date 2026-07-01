@@ -21,7 +21,6 @@ set(SOURCE_CPP_FILES
 )
 
 add_executable(${EXECUTABLE_NAME}_node ${SOURCE_CPP_FILES})
-# target_link_libraries(${EXECUTABLE_NAME}_node ${OPENCV_LIBS})
 target_link_libraries(${EXECUTABLE_NAME}_node
   rclcpp::rclcpp
   std_msgs::std_msgs
@@ -29,6 +28,7 @@ target_link_libraries(${EXECUTABLE_NAME}_node
   as2_core::as2_core
   as2_msgs::as2_msgs
   as2_behavior::as2_behavior
+  OpenCV
   cv_bridge::cv_bridge
   sensor_msgs::sensor_msgs
 )
