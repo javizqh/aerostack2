@@ -7,22 +7,10 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif()
 
-# IGNITION FORTRESS --> ROS2 GALACTIC
-# find_package(gz-gazebo6 REQUIRED)
-# set(IGN_GAZEBO_VER ${gz-gazebo6_VERSION_MAJOR})
-
 #by default use the fortress version of ignition
-set(GZ_VERSION "fortress")
-
-# check if harmonic libs are available
-find_package(gz-common5 QUIET)
-if(gz-common7_FOUND)
-  set(GZ_VERSION "jetty")
-endif()
+set(GZ_VERSION "jetty")
 
 message("Using GAZEBO version: ${GZ_VERSION}")
-
-if( ${GZ_VERSION} STREQUAL "jetty" )
 
 set(GZ_SIM "gz-sim10")
 set(GZ_COMMON "gz-common7")
@@ -31,19 +19,6 @@ set(GZ_TRANSPORT "gz-transport15")
 set(GZ_PLUGIN "gz-plugin4")
 set(GZ_RENDERING "gz-rendering10")
 set(GZ_MSGS "gz-msgs12")
-
-elseif( ${GZ_VERSION} STREQUAL "fortress" )
-
-set(GZ_SIM "ignition-gazebo6")
-set(GZ_COMMON "ignition-common4")
-set(GZ_MATH "ignition-math6")
-set(GZ_TRANSPORT "ignition-transport11")
-set(GZ_PLUGIN "ignition-plugin1")
-set(GZ_RENDERING "ignition-rendering6")
-set(GZ_MSGS "ignition-msgs8")
-
-endif()
-
 
 find_package(${GZ_SIM} REQUIRED)
 find_package(${GZ_COMMON} REQUIRED COMPONENTS graphics)
@@ -178,8 +153,6 @@ install(TARGETS
 
 # ============================================================================
 # Plugins
-if( ${GZ_VERSION} STREQUAL "harmonic" )
-
 ## Suction gripper plugin
 add_library(SuctionGripper SHARED
   plugins/SuctionGripper.cpp
@@ -212,27 +185,7 @@ target_link_libraries(MulticopterINDIControl PUBLIC
 install(
   TARGETS MulticopterINDIControl
   DESTINATION lib)
-
-elseif( ${GZ_VERSION} STREQUAL "fortress" )
-
-add_library(MulticopterINDIControl SHARED
-  plugins/indi-control_ign/INDIControlPlugin.cpp
-  plugins/indi-control_ign/Common.cpp
-)
-target_link_libraries(MulticopterINDIControl PUBLIC
-  ${GZ_SIM}
-  ${GZ_COMMON}
-  ${GZ_TRANSPORT}
-  ${GZ_MSGS}
-  Eigen3::Eigen
-)
-
-install(
-  TARGETS MulticopterINDIControl
-  DESTINATION lib)
-
-endif()
-
+  
 # ============================================================================
 # Python modules
 ament_python_install_package(
