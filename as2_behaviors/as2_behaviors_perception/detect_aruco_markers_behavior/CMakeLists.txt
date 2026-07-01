@@ -28,7 +28,7 @@ target_link_libraries(${EXECUTABLE_NAME}_node
   as2_core::as2_core
   as2_msgs::as2_msgs
   as2_behavior::as2_behavior
-  OpenCV
+  OpenCV::opencv2
   cv_bridge::cv_bridge
   sensor_msgs::sensor_msgs
 )
