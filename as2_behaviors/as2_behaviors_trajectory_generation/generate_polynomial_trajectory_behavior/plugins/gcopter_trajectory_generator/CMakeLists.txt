@@ -78,8 +78,8 @@ else()
     include(FetchContent)
     fetchcontent_declare(
       gcopter_trajectory_generator_lib
-      GIT_REPOSITORY https://github.com/aerostack2/gcopter_trajectory_generator_lib.git
-      GIT_TAG main
+      GIT_REPOSITORY https://github.com/javizqh/gcopter_trajectory_generator_lib.git
+      GIT_TAG v1.1
       SOURCE_DIR ${LOCAL_GCOPTER_SRC}
     )
     fetchcontent_makeavailable(gcopter_trajectory_generator_lib)

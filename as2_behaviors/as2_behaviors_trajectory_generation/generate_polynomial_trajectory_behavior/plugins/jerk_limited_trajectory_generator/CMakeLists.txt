@@ -63,8 +63,8 @@ else()
     include(FetchContent)
     fetchcontent_declare(
       trajectory_generator_jerk_limited
-      GIT_REPOSITORY https://github.com/aerostack2/jerk_limited_trajectory_generator_lib.git
-      GIT_TAG main
+      GIT_REPOSITORY https://github.com/javizqh/jerk_limited_trajectory_generator_lib.git
+      GIT_TAG v1.0
       SOURCE_DIR ${LOCAL_TGJL_SRC}
     )
     fetchcontent_makeavailable(trajectory_generator_jerk_limited)
