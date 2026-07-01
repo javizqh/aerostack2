@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 4.2.3)
 set(PLUGIN_NAME mav_trajectory_generator)
 
 # Default to C++17
