@@ -56,7 +56,7 @@ add_library(${PROJECT_NAME}_plugin_base SHARED ${PLUGIN_BASE_FILES})
 set_target_properties(${PROJECT_NAME}_plugin_base PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(${PROJECT_NAME}_plugin_base
   rclcpp::rclcpp
-  rclcpp_components::rclcpp_components
+  
   pluginlib::pluginlib
   as2_core::as2_core
   as2_msgs::as2_msgs
@@ -82,7 +82,7 @@ add_library(path_planner_component SHARED
 )
 target_link_libraries(path_planner_component
   rclcpp::rclcpp
-  rclcpp_components::rclcpp_components
+  
   pluginlib::pluginlib
   as2_core::as2_core
   as2_msgs::as2_msgs
@@ -105,7 +105,7 @@ add_library(path_planner_common SHARED
 set_target_properties(path_planner_common PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(path_planner_common
   rclcpp::rclcpp
-  rclcpp_components::rclcpp_components
+  
   pluginlib::pluginlib
   as2_core::as2_core
   as2_msgs::as2_msgs
@@ -168,7 +168,7 @@ add_executable(${PROJECT_NAME}_node ${SOURCE_CPP_FILES})
 target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME}_plugin_base)
 target_link_libraries(${PROJECT_NAME}_node
   rclcpp::rclcpp
-  rclcpp_components::rclcpp_components
+  
   pluginlib::pluginlib
   as2_core::as2_core
   as2_msgs::as2_msgs

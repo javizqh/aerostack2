@@ -68,7 +68,7 @@ target_link_libraries(${PROJECT_NAME}
   as2_motion_reference_handlers::as2_motion_reference_handlers
   geometry_msgs::geometry_msgs
   Eigen3::Eigen
-  rclcpp_components::rclcpp_components
+  
 )
 pluginlib_export_plugin_description_file(${PROJECT_NAME} plugins.xml)
 
@@ -118,7 +118,7 @@ foreach(EXECUTABLE ${SUBPACKAGES})
     as2_motion_reference_handlers::as2_motion_reference_handlers
     geometry_msgs::geometry_msgs
     Eigen3::Eigen
-    rclcpp_components::rclcpp_components
+    
   )
 
   install(TARGETS ${EXECUTABLE}_node
@@ -154,7 +154,7 @@ target_link_libraries(takeoff_component
   as2_motion_reference_handlers::as2_motion_reference_handlers
   geometry_msgs::geometry_msgs
   Eigen3::Eigen
-  rclcpp_components::rclcpp_components
+  
 )
 rclcpp_components_register_nodes(takeoff_component "TakeoffBehavior")
 
@@ -172,7 +172,7 @@ target_link_libraries(land_component
   as2_motion_reference_handlers::as2_motion_reference_handlers
   geometry_msgs::geometry_msgs
   Eigen3::Eigen
-  rclcpp_components::rclcpp_components
+  
 )
 rclcpp_components_register_nodes(land_component "LandBehavior")
 
@@ -190,7 +190,7 @@ target_link_libraries(go_to_component
   as2_motion_reference_handlers::as2_motion_reference_handlers
   geometry_msgs::geometry_msgs
   Eigen3::Eigen
-  rclcpp_components::rclcpp_components
+  
 )
 rclcpp_components_register_nodes(go_to_component "GoToBehavior")
 
@@ -208,7 +208,7 @@ target_link_libraries(follow_path_component
   as2_motion_reference_handlers::as2_motion_reference_handlers
   geometry_msgs::geometry_msgs
   Eigen3::Eigen
-  rclcpp_components::rclcpp_components
+  
 )
 rclcpp_components_register_nodes(follow_path_component "FollowPathBehavior")
 
@@ -226,7 +226,7 @@ target_link_libraries(follow_reference_component
   as2_motion_reference_handlers::as2_motion_reference_handlers
   geometry_msgs::geometry_msgs
   Eigen3::Eigen
-  rclcpp_components::rclcpp_components
+  
 )
 rclcpp_components_register_nodes(follow_reference_component "FollowReferenceBehavior")
 

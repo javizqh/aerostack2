@@ -102,7 +102,7 @@ target_link_libraries(${PROJECT_NAME}
   trajectory_msgs::trajectory_msgs
   visualization_msgs::visualization_msgs
   Eigen3::Eigen
-  rclcpp_components::rclcpp_components
+  
 )
 
 add_executable(swarm_flocking_behavior_node src/swarm_flocking_behavior_node.cpp)
@@ -119,7 +119,7 @@ target_link_libraries(swarm_flocking_behavior_node
   trajectory_msgs::trajectory_msgs
   visualization_msgs::visualization_msgs
   Eigen3::Eigen
-  rclcpp_components::rclcpp_components
+  
 )
 target_link_libraries(swarm_flocking_behavior_node  ${PROJECT_NAME} dynamic_trajectory_generator)
 

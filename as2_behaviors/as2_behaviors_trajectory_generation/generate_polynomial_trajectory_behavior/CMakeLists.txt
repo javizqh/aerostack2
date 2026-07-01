@@ -37,7 +37,7 @@ target_link_libraries(${BEHAVIOR_NAME}_plugin_base
   pluginlib::pluginlib
   rclcpp::rclcpp
   rclcpp_action::rclcpp_action
-  rclcpp_components::rclcpp_components
+  
   std_msgs::std_msgs
   std_srvs::std_srvs
   as2_core::as2_core
@@ -49,7 +49,7 @@ target_link_libraries(${BEHAVIOR_NAME}_plugin_base
   nav_msgs::nav_msgs
   visualization_msgs::visualization_msgs
   Eigen3::Eigen
-  rclcpp_components::rclcpp_components
+  
 )
 
 # --- Wrapper server (BehaviorServer + composable component) ---------------
@@ -59,7 +59,7 @@ target_link_libraries(${BEHAVIOR_NAME}
   pluginlib::pluginlib
   rclcpp::rclcpp
   rclcpp_action::rclcpp_action
-  rclcpp_components::rclcpp_components
+  
   std_msgs::std_msgs
   std_srvs::std_srvs
   as2_core::as2_core
@@ -71,7 +71,7 @@ target_link_libraries(${BEHAVIOR_NAME}
   nav_msgs::nav_msgs
   visualization_msgs::visualization_msgs
   Eigen3::Eigen
-  rclcpp_components::rclcpp_components
+  
 )
 rclcpp_components_register_nodes(${BEHAVIOR_NAME} "GeneratePolynomialTrajectoryBehavior")
 
@@ -82,7 +82,7 @@ target_link_libraries(${BEHAVIOR_NAME}_node
   pluginlib::pluginlib
   rclcpp::rclcpp
   rclcpp_action::rclcpp_action
-  rclcpp_components::rclcpp_components
+  
   std_msgs::std_msgs
   std_srvs::std_srvs
   as2_core::as2_core
@@ -94,7 +94,7 @@ target_link_libraries(${BEHAVIOR_NAME}_node
   nav_msgs::nav_msgs
   visualization_msgs::visualization_msgs
   Eigen3::Eigen
-  rclcpp_components::rclcpp_components
+  
 )
 # --- Install ---------------------------------------------------------------
 install(TARGETS
