@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PROJECT_NAME as2_alphanumeric_viewer)
 project(${PROJECT_NAME})
 
@@ -40,7 +40,15 @@ set(SOURCE_CPP_FILES
 )
 
 add_executable(${PROJECT_NAME}_node src/alphanumeric_viewer_node.cpp ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME}_node ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}_node
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_srvs::std_srvs
+  std_msgs::std_msgs
+  geometry_msgs::geometry_msgs
+  sensor_msgs::sensor_msgs
+)
 target_link_libraries(${PROJECT_NAME}_node ncurses)
 
 if(BUILD_TESTING)

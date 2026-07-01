@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PROJECT_NAME as2_map_server)
 project(${PROJECT_NAME})
 
@@ -39,7 +39,13 @@ include_directories(
 ###### PLUGIN BASE LIBRARY ######
 add_library(${PROJECT_NAME}_base SHARED include/${PROJECT_NAME}/plugin_base.hpp)
 set_target_properties(${PROJECT_NAME}_base PROPERTIES LINKER_LANGUAGE CXX)
-ament_target_dependencies(${PROJECT_NAME}_base ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}_base
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_msgs::std_msgs
+  pluginlib::pluginlib
+)
 
 install(
   DIRECTORY include/
@@ -67,7 +73,13 @@ set(SOURCE_CPP_FILES
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_msgs::std_msgs
+  pluginlib::pluginlib
+)
 
 install(
   DIRECTORY include/
@@ -90,7 +102,13 @@ install(
 ###### AS2_MAP_SERVER NODE EXECUTABLE ######
 add_executable(${PROJECT_NAME}_node src/map_server_node.cpp)
 target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME})
-ament_target_dependencies(${PROJECT_NAME}_node ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}_node
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_msgs::std_msgs
+  pluginlib::pluginlib
+)
 
 target_include_directories(${PROJECT_NAME}_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

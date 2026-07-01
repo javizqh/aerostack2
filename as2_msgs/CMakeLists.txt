@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 
 set(PROJECT_NAME as2_msgs)
 project(${PROJECT_NAME} VERSION 1.0.0)

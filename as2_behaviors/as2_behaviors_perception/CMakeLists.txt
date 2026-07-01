@@ -1,5 +1,5 @@
 # Set the minimum required CMake version
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 
 # Set the project name
 set(PROJECT_NAME as2_behaviors_perception)

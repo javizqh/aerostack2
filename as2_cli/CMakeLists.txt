@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 project(as2_cli)
 
 if(NOT CMAKE_CXX_STANDARD)

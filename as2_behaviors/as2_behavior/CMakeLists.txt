@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PROJECT_NAME as2_behavior)
 project(${PROJECT_NAME})
 
@@ -44,7 +44,13 @@ add_library(${PROJECT_NAME} SHARED ${SOURCE_CPP_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_srvs::std_srvs
+  std_msgs::std_msgs
+)
 
 
 # Build tests if testing is enabled

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PLUGIN_NAME dynamic_mav_trajectory_generator)
 
 # Default to C++17
@@ -85,7 +85,16 @@ target_link_libraries(${PLUGIN_NAME}
   ${BEHAVIOR_NAME}_plugin_base
   dynamic_trajectory_generator
 )
-ament_target_dependencies(${PLUGIN_NAME} ${PLUGIN_DEPENDENCIES})
+target_link_libraries(${PLUGIN_NAME}
+  rclcpp::rclcpp
+  pluginlib::pluginlib
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  geometry_msgs::geometry_msgs
+  nav_msgs::nav_msgs
+  visualization_msgs::visualization_msgs
+  Eigen3::Eigen
+)
 
 install(DIRECTORY include/
   DESTINATION include

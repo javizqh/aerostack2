@@ -1,5 +1,5 @@
 # Set the minimum required CMake version
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 
 # Set the project name
 set(PROJECT_NAME as2_realsense_interface)
@@ -48,12 +48,36 @@ set(SOURCE_CPP_FILES
 
 # Create the library
 add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+  sensor_msgs::sensor_msgs
+  nav_msgs::nav_msgs
+  geometry_msgs::geometry_msgs
+  realsense2::realsense2
+  tf2::tf2
+  tf2_ros::tf2_ros
+)
 target_link_libraries(${PROJECT_NAME} ${realsense2_LIBRARY})
 
 # Create the node executable
 add_executable(${PROJECT_NAME}_node src/as2_realsense_interface_node.cpp)
-ament_target_dependencies(${PROJECT_NAME}_node ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}_node
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+  sensor_msgs::sensor_msgs
+  nav_msgs::nav_msgs
+  geometry_msgs::geometry_msgs
+  realsense2::realsense2
+  tf2::tf2
+  tf2_ros::tf2_ros
+)
 target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME})
 
 # Install the headers

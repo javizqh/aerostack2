@@ -1,5 +1,5 @@
 # Set the minimum required CMake version
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 
 # Set the project name
 set(PROJECT_NAME as2_platform_gazebo)
@@ -42,11 +42,25 @@ set(SOURCE_CPP_FILES
 
 # Create the node executable
 add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME}_node ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}_node 
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_gazebo_assets::as2_gazebo_assets
+  geometry_msgs::geometry_msgs
+)
+
 
 # Create the library
 add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_gazebo_assets::as2_gazebo_assets
+  geometry_msgs::geometry_msgs
+)
+
 
 # Install the headers
 install(

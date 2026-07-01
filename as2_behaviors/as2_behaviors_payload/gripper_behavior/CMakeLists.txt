@@ -23,7 +23,17 @@ set(PLUGIN_BASE_FILES
 
 add_library(${SUBPROJECT_NAME}_plugin_base SHARED ${PLUGIN_BASE_FILES})
 set_target_properties(${SUBPROJECT_NAME}_plugin_base PROPERTIES LINKER_LANGUAGE CXX)
-ament_target_dependencies(${SUBPROJECT_NAME}_plugin_base ${SUBPROJECT_DEPENDENCIES})
+target_link_libraries(${SUBPROJECT_NAME}_plugin_base
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  pluginlib::pluginlib
+)
 
 # Create main behavior library
 set(BEHAVIOR_SOURCE_FILES
@@ -31,9 +41,19 @@ set(BEHAVIOR_SOURCE_FILES
 )
 
 add_library(${SUBPROJECT_NAME}_lib SHARED ${BEHAVIOR_SOURCE_FILES})
-ament_target_dependencies(${SUBPROJECT_NAME}_lib ${SUBPROJECT_DEPENDENCIES})
 target_link_libraries(${SUBPROJECT_NAME}_lib
   ${SUBPROJECT_NAME}_plugin_base
+)
+target_link_libraries(${SUBPROJECT_NAME}_lib
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  pluginlib::pluginlib
 )
 
 # Create executable
@@ -45,7 +65,17 @@ add_executable(as2_${SUBPROJECT_NAME}_node ${NODE_SOURCE_FILES})
 target_link_libraries(as2_${SUBPROJECT_NAME}_node
   ${SUBPROJECT_NAME}_lib
 )
-ament_target_dependencies(as2_${SUBPROJECT_NAME}_node ${SUBPROJECT_DEPENDENCIES})
+target_link_libraries(as2_${SUBPROJECT_NAME}_node
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  pluginlib::pluginlib
+)
 
 target_include_directories(as2_${SUBPROJECT_NAME}_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

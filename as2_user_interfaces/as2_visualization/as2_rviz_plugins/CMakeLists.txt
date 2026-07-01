@@ -51,7 +51,18 @@ set(SRC_FILES
 ## is called) and specify the list of source files we collected above
 ## in ``${SRC_FILES}``. We also add the needed dependencies.
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}
+  geometry_msgs::geometry_msgs
+  pluginlib::pluginlib
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  rviz_common::rviz_common
+  rviz_rendering::rviz_rendering
+  sensor_msgs::sensor_msgs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_motion_reference_handlers::as2_motion_reference_handlers
+)
 target_include_directories(${PROJECT_NAME} PUBLIC
   ${Qt5Widgets_INCLUDE_DIRS})
 

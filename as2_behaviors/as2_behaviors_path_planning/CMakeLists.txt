@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PROJECT_NAME as2_behaviors_path_planning)
 project(${PROJECT_NAME} VERSION 1.0.0)
 
@@ -54,7 +54,18 @@ add_library(${PROJECT_NAME}_plugin_base SHARED ${PLUGIN_BASE_FILES})
 
 # Specify the language for the target as C++ (as it is a header only library)
 set_target_properties(${PROJECT_NAME}_plugin_base PROPERTIES LINKER_LANGUAGE CXX)
-ament_target_dependencies(${PROJECT_NAME}_plugin_base ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}_plugin_base
+  rclcpp::rclcpp
+  rclcpp_components::rclcpp_components
+  pluginlib::pluginlib
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  nav_msgs::nav_msgs
+  visualization_msgs::visualization_msgs
+  tf2_ros::tf2_ros
+)
 
 install(
   DIRECTORY include/
@@ -69,7 +80,18 @@ ament_export_targets(${PROJECT_NAME}_plugin_base)
 add_library(path_planner_component SHARED
   src/path_planner_behavior.cpp
 )
-ament_target_dependencies(path_planner_component ${PROJECT_DEPENDENCIES})
+target_link_libraries(path_planner_component
+  rclcpp::rclcpp
+  rclcpp_components::rclcpp_components
+  pluginlib::pluginlib
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  nav_msgs::nav_msgs
+  visualization_msgs::visualization_msgs
+  tf2_ros::tf2_ros
+)
 rclcpp_components_register_nodes(path_planner_component "PathPlannerBehavior")
 
 # Common libraries
@@ -81,7 +103,18 @@ add_library(path_planner_common SHARED
 
 # Specify the language for the target as C++ (as it is a header only library)
 set_target_properties(path_planner_common PROPERTIES LINKER_LANGUAGE CXX)
-ament_target_dependencies(path_planner_common ${PROJECT_DEPENDENCIES})
+target_link_libraries(path_planner_common
+  rclcpp::rclcpp
+  rclcpp_components::rclcpp_components
+  pluginlib::pluginlib
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  nav_msgs::nav_msgs
+  visualization_msgs::visualization_msgs
+  tf2_ros::tf2_ros
+)
 
 install(
   DIRECTORY common/include
@@ -133,7 +166,18 @@ set(SOURCE_CPP_FILES
 
 add_executable(${PROJECT_NAME}_node ${SOURCE_CPP_FILES})
 target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME}_plugin_base)
-ament_target_dependencies(${PROJECT_NAME}_node ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}_node
+  rclcpp::rclcpp
+  rclcpp_components::rclcpp_components
+  pluginlib::pluginlib
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  nav_msgs::nav_msgs
+  visualization_msgs::visualization_msgs
+  tf2_ros::tf2_ros
+)
 
 target_include_directories(${PROJECT_NAME}_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

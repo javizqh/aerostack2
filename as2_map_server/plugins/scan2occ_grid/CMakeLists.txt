@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PLUGIN_NAME scan2occ_grid)
 
 # Default to C++17
@@ -35,7 +35,16 @@ include_directories(
 
 add_library(${PLUGIN_NAME} SHARED src/${PLUGIN_NAME}.cpp)
 target_link_libraries(${PLUGIN_NAME} as2_map_server_base)
-ament_target_dependencies(${PLUGIN_NAME} ${PLUGIN_DEPENDENCIES})
+target_link_libraries(${PLUGIN_NAME}
+  rclcpp::rclcpp
+  tf2::tf2
+  tf2_ros::tf2_ros
+  tf2_geometry_msgs::tf2_geometry_msgs
+  geometry_msgs::geometry_msgs
+  nav_msgs::nav_msgs
+  sensor_msgs::sensor_msgs
+  OpenCV::OpenCV
+)
 
 install(
   DIRECTORY include/

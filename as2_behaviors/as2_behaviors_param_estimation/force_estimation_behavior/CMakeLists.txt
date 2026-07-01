@@ -28,10 +28,30 @@ set(SOURCE_CPP_FILES
 # Create the node executable
 add_executable(${SUBPROJECT_NAME}_node ${SOURCE_CPP_FILES})
 target_link_libraries(${SUBPROJECT_NAME}_node)
-ament_target_dependencies(${SUBPROJECT_NAME}_node ${PROJECT_DEPENDENCIES} ${EXECUTABLE_DEPENDENCIES})
+target_link_libraries(${SUBPROJECT_NAME}_node
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  sensor_msgs::sensor_msgs
+)
 
 add_library(${SUBPROJECT_NAME} SHARED ${SOURCE_CPP_FILES})
-ament_target_dependencies(${SUBPROJECT_NAME} ${PROJECT_DEPENDENCIES} ${EXECUTABLE_DEPENDENCIES})
+target_link_libraries(${SUBPROJECT_NAME}
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  sensor_msgs::sensor_msgs
+)
 
 # Include headers in the library
 target_include_directories(${SUBPROJECT_NAME} PUBLIC

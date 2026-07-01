@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PLUGIN_NAME a_star)
 project(${PLUGIN_NAME} VERSION 1.0.0)
 
@@ -49,7 +49,20 @@ set(SOURCE_CPP_FILES
 # Library
 add_library(${PLUGIN_NAME} SHARED ${SOURCE_CPP_FILES})
 target_link_libraries(${PLUGIN_NAME} as2_behaviors_path_planning_plugin_base)
-ament_target_dependencies(${PLUGIN_NAME} ${PLUGIN_DEPENDENCIES})
+target_link_libraries(${PLUGIN_NAME}
+  rclcpp::rclcpp
+  pluginlib::pluginlib
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  geometry_msgs::geometry_msgs
+  Eigen3::Eigen
+  std_msgs::std_msgs
+  nav_msgs::nav_msgs
+  OpenCV::OpenCV
+  visualization_msgs::visualization_msgs
+  tf2::tf2
+  tf2_ros::tf2_ros
+)
 
 install(
   DIRECTORY include/

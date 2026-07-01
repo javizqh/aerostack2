@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PLUGIN_NAME point_cloud2occ_grid)
 
 # Default to C++17

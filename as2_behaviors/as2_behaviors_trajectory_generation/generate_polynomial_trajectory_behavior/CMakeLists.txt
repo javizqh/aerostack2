@@ -32,25 +32,70 @@ add_library(${BEHAVIOR_NAME}_plugin_base SHARED
 target_include_directories(${BEHAVIOR_NAME}_plugin_base PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-ament_target_dependencies(${BEHAVIOR_NAME}_plugin_base
-  ${PROJECT_DEPENDENCIES}
-  ${BEHAVIOR_DEPENDENCIES})
+
+target_link_libraries(${BEHAVIOR_NAME}_plugin_base
+  pluginlib::pluginlib
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  rclcpp_components::rclcpp_components
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  as2_motion_reference_handlers::as2_motion_reference_handlers
+  trajectory_msgs::trajectory_msgs
+  geometry_msgs::geometry_msgs
+  nav_msgs::nav_msgs
+  visualization_msgs::visualization_msgs
+  Eigen3::Eigen
+  rclcpp_components::rclcpp_components
+)
 
 # --- Wrapper server (BehaviorServer + composable component) ---------------
 add_library(${BEHAVIOR_NAME} SHARED src/${BEHAVIOR_NAME}.cpp)
 target_link_libraries(${BEHAVIOR_NAME} ${BEHAVIOR_NAME}_plugin_base)
-ament_target_dependencies(${BEHAVIOR_NAME}
-  ${PROJECT_DEPENDENCIES}
-  ${BEHAVIOR_DEPENDENCIES})
+target_link_libraries(${BEHAVIOR_NAME}
+  pluginlib::pluginlib
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  rclcpp_components::rclcpp_components
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  as2_motion_reference_handlers::as2_motion_reference_handlers
+  trajectory_msgs::trajectory_msgs
+  geometry_msgs::geometry_msgs
+  nav_msgs::nav_msgs
+  visualization_msgs::visualization_msgs
+  Eigen3::Eigen
+  rclcpp_components::rclcpp_components
+)
 rclcpp_components_register_nodes(${BEHAVIOR_NAME} "GeneratePolynomialTrajectoryBehavior")
 
 # --- Standalone executable -------------------------------------------------
 add_executable(${BEHAVIOR_NAME}_node src/${BEHAVIOR_NAME}_node.cpp)
 target_link_libraries(${BEHAVIOR_NAME}_node ${BEHAVIOR_NAME})
-ament_target_dependencies(${BEHAVIOR_NAME}_node
-  ${PROJECT_DEPENDENCIES}
-  ${BEHAVIOR_DEPENDENCIES})
-
+target_link_libraries(${BEHAVIOR_NAME}_node
+  pluginlib::pluginlib
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  rclcpp_components::rclcpp_components
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  as2_motion_reference_handlers::as2_motion_reference_handlers
+  trajectory_msgs::trajectory_msgs
+  geometry_msgs::geometry_msgs
+  nav_msgs::nav_msgs
+  visualization_msgs::visualization_msgs
+  Eigen3::Eigen
+  rclcpp_components::rclcpp_components
+)
 # --- Install ---------------------------------------------------------------
 install(TARGETS
     ${BEHAVIOR_NAME}

@@ -89,10 +89,38 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  as2_motion_reference_handlers::as2_motion_reference_handlers
+  tf2::tf2
+  tf2_ros::tf2_ros
+  trajectory_msgs::trajectory_msgs
+  visualization_msgs::visualization_msgs
+  Eigen3::Eigen
+  rclcpp_components::rclcpp_components
+)
 
 add_executable(swarm_flocking_behavior_node src/swarm_flocking_behavior_node.cpp)
-ament_target_dependencies(swarm_flocking_behavior_node ${PROJECT_DEPENDENCIES})
+target_link_libraries(swarm_flocking_behavior_node
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  as2_motion_reference_handlers::as2_motion_reference_handlers
+  tf2::tf2
+  tf2_ros::tf2_ros
+  trajectory_msgs::trajectory_msgs
+  visualization_msgs::visualization_msgs
+  Eigen3::Eigen
+  rclcpp_components::rclcpp_components
+)
 target_link_libraries(swarm_flocking_behavior_node  ${PROJECT_NAME} dynamic_trajectory_generator)
 
 

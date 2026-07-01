@@ -1,5 +1,5 @@
 # Set the minimum required CMake version
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 
 # Set the project name
 set(PROJECT_NAME as2_platform_multirotor_simulator)
@@ -61,17 +61,34 @@ set(SOURCE_CPP_FILES
 
 # Create the node executable
 add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME}_node ${PROJECT_DEPENDENCIES})
 target_link_libraries(${PROJECT_NAME}_node multirotor_simulator)
+target_link_libraries(${PROJECT_NAME}_node 
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_srvs::std_srvs
+  std_msgs::std_msgs
+  rosgraph_msgs::rosgraph_msgs
+)
 
 # Standalone external /clock publisher node
 add_executable(sim_clock_publisher_node src/sim_clock_publisher_node.cpp)
-ament_target_dependencies(sim_clock_publisher_node rclcpp rosgraph_msgs)
+target_link_libraries(sim_clock_publisher_node
+  rclcpp::rclcpp
+  rosgraph_msgs::rosgraph_msgs
+)
 
 # Create the library
 add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
 target_link_libraries(${PROJECT_NAME} multirotor_simulator)
+target_link_libraries(${PROJECT_NAME} 
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_srvs::std_srvs
+  std_msgs::std_msgs
+  rosgraph_msgs::rosgraph_msgs
+)
 
 # Install the headers
 install(

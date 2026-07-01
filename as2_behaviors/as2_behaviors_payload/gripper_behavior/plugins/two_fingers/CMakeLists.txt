@@ -26,7 +26,17 @@ target_link_libraries(${PLUGIN_NAME}
   ${SUBPROJECT_NAME}_lib
   ${SUBPROJECT_NAME}_plugin_base
 )
-ament_target_dependencies(${PLUGIN_NAME} ${PLUGIN_DEPENDENCIES})
+target_link_libraries(${PLUGIN_NAME}
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_behavior::as2_behavior
+  geometry_msgs::geometry_msgs
+  pluginlib::pluginlib
+)
 
 install(
   DIRECTORY include/

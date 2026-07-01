@@ -1,5 +1,5 @@
 # Set the minimum required CMake version
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 
 # Set the project name
 set(PROJECT_NAME as2_behavior_tree)
@@ -59,12 +59,30 @@ set(PLUGINS_CPP_FILES
 
 # Create the node executable
 add_executable(${PROJECT_NAME}_node src/as2_behavior_tree_node.cpp)
-ament_target_dependencies(${PROJECT_NAME}_node ${PROJECT_DEPENDENCIES})
 target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME}_node 
+  behaviortree_cpp::behaviortree_cpp
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_srvs::std_srvs
+  geometry_msgs::geometry_msgs
+  sensor_msgs::sensor_msgs
+)
 
 # Create the library
 add_library(${PROJECT_NAME} ${PLUGINS_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}
+  behaviortree_cpp::behaviortree_cpp
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_srvs::std_srvs
+  geometry_msgs::geometry_msgs
+  sensor_msgs::sensor_msgs
+)
 
 # Install the headers
 install(

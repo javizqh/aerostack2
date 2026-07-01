@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PROJECT_NAME as2_external_object_to_tf)
 project(${PROJECT_NAME})
 
@@ -45,11 +45,35 @@ set(SOURCE_CPP_FILES
 
 # Create the node executable
 add_executable(${PROJECT_NAME}_node src/as2_external_object_to_tf_node.cpp ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME}_node ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}_node
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_srvs::std_srvs
+  std_msgs::std_msgs
+  geometry_msgs::geometry_msgs
+  yaml-cpp::yaml-cpp
+  sensor_msgs::sensor_msgs
+  tf2::tf2
+  tf2_ros::tf2_ros
+  mocap4r2_msgs::mocap4r2_msgs
+)
 
 # Create the library
 add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}
+  rclcpp::rclcpp
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  std_srvs::std_srvs
+  std_msgs::std_msgs
+  geometry_msgs::geometry_msgs
+  yaml-cpp::yaml-cpp
+  sensor_msgs::sensor_msgs
+  tf2::tf2
+  tf2_ros::tf2_ros
+  mocap4r2_msgs::mocap4r2_msgs
+)
 
 # Target interface with executable and library
 ament_export_dependencies(rosidl_default_runtime)

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PROJECT_NAME as2_motion_controller)
 project(${PROJECT_NAME} VERSION 1.0.0)
 
@@ -43,7 +43,14 @@ add_library(${PROJECT_NAME}_plugin_base SHARED ${PLUGIN_BASE_FILES})
 
 # Specify the language for the target as C++ (as it is a header only library)
 set_target_properties(${PROJECT_NAME}_plugin_base PROPERTIES LINKER_LANGUAGE CXX)
-ament_target_dependencies(${PROJECT_NAME}_plugin_base ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}_plugin_base
+  rclcpp::rclcpp
+  pluginlib::pluginlib
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_motion_reference_handlers::as2_motion_reference_handlers
+  geometry_msgs::geometry_msgs
+)
 
 # Create as2_motion_controller library
 set(SOURCE_CPP_FILES
@@ -53,13 +60,28 @@ set(SOURCE_CPP_FILES
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}
+  rclcpp::rclcpp
+  pluginlib::pluginlib
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_motion_reference_handlers::as2_motion_reference_handlers
+  geometry_msgs::geometry_msgs
+)
 
 # Test fixtures library: reusable mock platform for plugin smoke executables.
 add_library(${PROJECT_NAME}_test_fixtures SHARED
   src/testing/mock_platform.cpp
 )
-ament_target_dependencies(${PROJECT_NAME}_test_fixtures ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}_test_fixtures
+  rclcpp::rclcpp
+  pluginlib::pluginlib
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_motion_reference_handlers::as2_motion_reference_handlers
+  geometry_msgs::geometry_msgs
+)
+
 
 # Create executable
 set(SOURCE_CPP_FILES
@@ -68,7 +90,14 @@ set(SOURCE_CPP_FILES
 
 add_executable(${PROJECT_NAME}_node ${SOURCE_CPP_FILES})
 target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME})
-ament_target_dependencies(${PROJECT_NAME}_node ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}_node
+  rclcpp::rclcpp
+  pluginlib::pluginlib
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_motion_reference_handlers::as2_motion_reference_handlers
+  geometry_msgs::geometry_msgs
+)
 
 target_include_directories(${PROJECT_NAME}_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

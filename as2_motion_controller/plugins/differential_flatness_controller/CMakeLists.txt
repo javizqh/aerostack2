@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PLUGIN_NAME differential_flatness_controller)
 
 # Default to C++17
@@ -43,7 +43,15 @@ set(SOURCE_CPP_FILES
 # Library
 add_library(${PLUGIN_NAME} SHARED ${SOURCE_CPP_FILES})
 target_link_libraries(${PLUGIN_NAME} ${PROJECT_NAME} ${PROJECT_NAME}_plugin_base)
-ament_target_dependencies(${PLUGIN_NAME} ${PLUGIN_DEPENDENCIES})
+target_link_libraries(${PLUGIN_NAME}
+  rclcpp::rclcpp
+  pluginlib::pluginlib
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  as2_motion_reference_handlers::as2_motion_reference_handlers
+  geometry_msgs::geometry_msgs
+  Eigen3::Eigen
+)
 
 install(
   DIRECTORY include/

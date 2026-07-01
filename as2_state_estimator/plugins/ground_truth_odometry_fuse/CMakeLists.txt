@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PLUGIN_NAME ground_truth_odometry_fuse)
 
 # Default to C++17
@@ -42,7 +42,17 @@ set(SOURCE_CPP_FILES
 # Library
 add_library(${PLUGIN_NAME} SHARED ${SOURCE_CPP_FILES})
 target_link_libraries(${PLUGIN_NAME} ${PROJECT_NAME} ${PROJECT_NAME}_plugin_base)
-ament_target_dependencies(${PLUGIN_NAME} ${PLUGIN_DEPENDENCIES})
+target_link_libraries(${PLUGIN_NAME}
+  rclcpp::rclcpp
+  pluginlib::pluginlib
+  tf2::tf2
+  tf2_ros::tf2_ros
+  Eigen3::Eigen
+  nav_msgs::nav_msgs
+  as2_core::as2_core
+  geometry_msgs::geometry_msgs
+  mocap4r2_msgs::mocap4r2_msgs
+)
 
 install(
   DIRECTORY include/

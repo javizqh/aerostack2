@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 set(PROJECT_NAME as2_behaviors_platform)
 project(${PROJECT_NAME} VERSION 1.0.0)
 
@@ -37,12 +37,36 @@ set(SOURCE_CPP_FILES
 add_executable(arm_behavior src/set_arming_state_behavior_main.cpp)
 add_executable(offboard_behavior src/set_offboard_mode_behavior_main.cpp)
 
-ament_target_dependencies(arm_behavior ${PROJECT_DEPENDENCIES})
-ament_target_dependencies(offboard_behavior ${PROJECT_DEPENDENCIES})
+target_link_libraries(arm_behavior
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  as2_behavior::as2_behavior
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  action_msgs::action_msgs
+)
+target_link_libraries(offboard_behavior
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  as2_behavior::as2_behavior
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  action_msgs::action_msgs
+)
 
 # Create the library
 add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME}
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  as2_behavior::as2_behavior
+  std_srvs::std_srvs
+  as2_core::as2_core
+  as2_msgs::as2_msgs
+  action_msgs::action_msgs
+)
 
 install(TARGETS
   arm_behavior
