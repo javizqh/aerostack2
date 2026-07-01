@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.2.3)
 project(as2_core VERSION 0.2.2)
 set(PROJECT_NAME ${PROJECT_NAME})
 
@@ -21,12 +21,8 @@ add_compile_options(-Wall -Wextra -pedantic)
 # set a define with the system env variable ROS_DISTRO
 set(ROS_DISTRO $ENV{ROS_DISTRO})
 message(STATUS "Detected ROS_DISTRO: ${ROS_DISTRO}")
-if(ROS_DISTRO STREQUAL "galactic")
-  option(ROS_GALACTIC "ROS Galactic" ON)
-elseif(ROS_DISTRO STREQUAL "humble")
-  option(ROS_HUMBLE "ROS Humble" ON)
-elseif(ROS_DISTRO STREQUAL "jazzy")
-  option(ROS_JAZZY "ROS Jazzy" ON)
+if(ROS_DISTRO STREQUAL "lyrical")
+  option(ROS_LYRICAL "ROS Lyrical" ON)
 endif()
 configure_file(
   "${PROJECT_SOURCE_DIR}/include/as2_core/custom/tf2_geometry_msgs.hpp.in"
@@ -90,6 +86,22 @@ add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP_FILES})
 target_link_libraries(${PROJECT_NAME}
   yaml-cpp::yaml-cpp
   GeographicLib::GeographicLib
+  rclcpp::rclcpp
+  std_msgs::std_msgs
+  nav_msgs::nav_msgs
+  sensor_msgs::sensor_msgs
+  as2_msgs::as2_msgs
+  std_srvs::std_srvs
+  geometry_msgs::geometry_msgs
+  tf2_geometry_msgs::tf2_geometry_msgs
+  tf2::tf2
+  tf2_ros::tf2_ros
+  rclcpp_lifecycle::rclcpp_lifecycle
+  rclcpp_action::rclcpp_action
+  image_transport::image_transport
+  cv_bridge::cv_bridge
+  geographic_msgs::geographic_msgs
+  Eigen3::Eigen
 )
 
 # Mocks library
@@ -106,7 +118,7 @@ target_include_directories(
     ${EIGEN3_INCLUDE_DIRS}
 )
 
-ament_target_dependencies(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+# target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(${PROJECT_DEPENDENCIES} yaml-cpp GeographicLib)
 
@@ -120,6 +132,7 @@ target_include_directories(as2_names PRIVATE
 )
 target_link_libraries(as2_names PRIVATE
   rclcpp::rclcpp
+  tf2::tf2
 )
 
 install(

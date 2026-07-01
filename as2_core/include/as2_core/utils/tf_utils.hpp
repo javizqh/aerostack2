@@ -10,7 +10,8 @@
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
 //
-//    * Neither the name of the Universidad Politécnica de Madrid nor the names of its
+//    * Neither the name of the Universidad Politécnica de Madrid nor the names
+//    of its
 //      contributors may be used to endorse or promote products derived from
 //      this software without specific prior written permission.
 //
@@ -37,65 +38,67 @@
 #ifndef AS2_CORE__UTILS__TF_UTILS_HPP_
 #define AS2_CORE__UTILS__TF_UTILS_HPP_
 
-
-#include <tf2/convert.h>
-#include <tf2/time.h>
+#include <tf2/convert.hpp>
+#include <tf2/time.hpp>
 #include <tf2_ros/create_timer_ros.h>
 
+#include <memory>
 #include <string>
 #include <utility>
-#include <memory>
 
+#include <as2_msgs/msg/trajectory_point.hpp>
+#include <as2_msgs/msg/trajectory_setpoints.hpp>
 #include <geometry_msgs/msg/point_stamped.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <geometry_msgs/msg/vector3_stamped.hpp>
 #include <nav_msgs/msg/path.hpp>
-#include <as2_msgs/msg/trajectory_point.hpp>
-#include <as2_msgs/msg/trajectory_setpoints.hpp>
 
 #include "as2_core/custom/tf2_geometry_msgs.hpp"
 #include "as2_core/node.hpp"
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
 
-namespace as2
-{
-namespace tf
-{
+namespace as2 {
+namespace tf {
 
 using namespace std::chrono_literals; // NOLINT
 
 /**
- * @brief Prefix a TF frame name with a namespace, following aerostack2 conventions.
+ * @brief Prefix a TF frame name with a namespace, following aerostack2
+ * conventions.
  *
  * Rules applied:
  *  - If `_frame_name` is empty, throws `std::runtime_error`.
  *  - If `_frame_name` starts with '/', it is treated as absolute and returned
  *    without the leading '/' (no namespace prefix is added).
- *  - If `_frame_name` already starts with `<_namespace>/`, it is returned as is.
- *  - If `_namespace` is empty, `_frame_name` is returned unchanged and a warning
- *    is logged (potential frame conflict).
+ *  - If `_frame_name` already starts with `<_namespace>/`, it is returned as
+ * is.
+ *  - If `_namespace` is empty, `_frame_name` is returned unchanged and a
+ * warning is logged (potential frame conflict).
  *  - Otherwise, returns "<namespace>/<frame_name>", stripping any leading '/'
  *    in `_namespace`.
  *
  * @param _namespace  Robot/node namespace. May be empty or start with '/'.
- * @param _frame_name Frame name, possibly absolute (leading '/') or already prefixed.
+ * @param _frame_name Frame name, possibly absolute (leading '/') or already
+ * prefixed.
  * @return Fully-qualified TF frame id.
  * @throw std::runtime_error if `_frame_name` is empty.
  */
-std::string generateTfName(const std::string & _namespace, const std::string & _frame_name);
+std::string generateTfName(const std::string &_namespace,
+                           const std::string &_frame_name);
 
 /**
  * @brief Convenience overload that uses `node->get_namespace()` as namespace.
  *
  * @param node        ROS 2 node whose namespace will be used as prefix.
- * @param _frame_name Frame name (see `generateTfName(namespace, frame_name)` for rules).
+ * @param _frame_name Frame name (see `generateTfName(namespace, frame_name)`
+ * for rules).
  * @return Fully-qualified TF frame id.
  * @throw std::runtime_error if `_frame_name` is empty.
  */
-std::string generateTfName(rclcpp::Node * node, std::string _frame_name);
+std::string generateTfName(rclcpp::Node *node, std::string _frame_name);
 /**
  * @brief Build a TransformStamped from a translation and Euler-angle rotation.
  *
@@ -116,9 +119,11 @@ std::string generateTfName(rclcpp::Node * node, std::string _frame_name);
  * @param _yaw            Yaw angle, in radians.
  * @return `TransformStamped` describing parent → child.
  */
-geometry_msgs::msg::TransformStamped getTransformation(
-  const std::string & _frame_id, const std::string & _child_frame_id, double _translation_x,
-  double _translation_y, double _translation_z, double _roll, double _pitch, double _yaw);
+geometry_msgs::msg::TransformStamped
+getTransformation(const std::string &_frame_id,
+                  const std::string &_child_frame_id, double _translation_x,
+                  double _translation_y, double _translation_z, double _roll,
+                  double _pitch, double _yaw);
 
 /**
  * @brief Helper that wraps `tf2_ros::Buffer` and `tf2_ros::TransformListener`
@@ -132,13 +137,13 @@ geometry_msgs::msg::TransformStamped getTransformation(
  * The convert/getter overloads that perform a `lookupTransform` use `"earth"`
  * as the fixed frame, which is the inertial root used in aerostack2.
  */
-class TfHandler
-{
+class TfHandler {
 private:
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-  as2::Node * node_;
-  std::chrono::nanoseconds tf_timeout_threshold_ = std::chrono::nanoseconds::zero();
+  as2::Node *node_;
+  std::chrono::nanoseconds tf_timeout_threshold_ =
+      std::chrono::nanoseconds::zero();
 
 public:
   /**
@@ -146,7 +151,7 @@ public:
    *
    * @param _node Owning node used for clock, parameters and logging.
    */
-  explicit TfHandler(as2::Node * _node);
+  explicit TfHandler(as2::Node *_node);
 
   /**
    * @brief Set the TF lookup timeout threshold.
@@ -160,7 +165,8 @@ public:
    *
    * @param tf_timeout_threshold Timeout, as `std::chrono::nanoseconds`.
    */
-  void setTfTimeoutThreshold(const std::chrono::nanoseconds & tf_timeout_threshold);
+  void
+  setTfTimeoutThreshold(const std::chrono::nanoseconds &tf_timeout_threshold);
 
   /**
    * @brief Get the TF lookup timeout threshold.
@@ -179,35 +185,34 @@ public:
   /**
    * @brief Convert a stamped message from one frame to another.
    *
-   * Uses `lookupTransform(target, now, source, input.header.stamp, "earth", timeout)`
-   * when `timeout > 0`, and the latest available transform (`tf2::TimePointZero`)
-   * otherwise.
+   * Uses `lookupTransform(target, now, source, input.header.stamp, "earth",
+   * timeout)` when `timeout > 0`, and the latest available transform
+   * (`tf2::TimePointZero`) otherwise.
    *
    * @param input        Input stamped message; must expose `header.frame_id`
    *                     and `header.stamp`.
    * @param target_frame Target frame id.
-   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero` (latest).
+   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero`
+   * (latest).
    * @return Message expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  template<typename T>
-  T convert(
-    const T & input, const std::string & target_frame,
-    const std::chrono::nanoseconds timeout)
-  {
+  template <typename T>
+  T convert(const T &input, const std::string &target_frame,
+            const std::chrono::nanoseconds timeout) {
     T output;
     if (timeout != std::chrono::nanoseconds::zero()) {
       tf2::doTransform(
-        input, output,
-        tf_buffer_->lookupTransform(
-          target_frame, node_->get_clock()->now(), input.header.frame_id, input.header.stamp,
-          "earth", timeout));
+          input, output,
+          tf_buffer_->lookupTransform(target_frame, node_->get_clock()->now(),
+                                      input.header.frame_id, input.header.stamp,
+                                      "earth", timeout));
     } else {
       tf2::doTransform(
-        input, output,
-        tf_buffer_->lookupTransform(
-          target_frame, tf2::TimePointZero, input.header.frame_id, tf2::TimePointZero, "earth",
-          timeout));
+          input, output,
+          tf_buffer_->lookupTransform(target_frame, tf2::TimePointZero,
+                                      input.header.frame_id, tf2::TimePointZero,
+                                      "earth", timeout));
     }
 
     output.header.stamp = input.header.stamp;
@@ -219,9 +224,9 @@ public:
    * @brief Convert a stamped message from one frame to another, using the
    *        configured `tf_timeout_threshold_`.
    *
-   * Uses `lookupTransform(target, now, source, input.header.stamp, "earth", timeout)`
-   * when `timeout > 0`, and the latest available transform (`tf2::TimePointZero`)
-   * otherwise.
+   * Uses `lookupTransform(target, now, source, input.header.stamp, "earth",
+   * timeout)` when `timeout > 0`, and the latest available transform
+   * (`tf2::TimePointZero`) otherwise.
    *
    * @param input        Input stamped message; must expose `header.frame_id`
    *                     and `header.stamp`.
@@ -229,10 +234,8 @@ public:
    * @return Message expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  template<typename T>
-  T convert(
-    const T & input, const std::string & target_frame)
-  {
+  template <typename T>
+  T convert(const T &input, const std::string &target_frame) {
     return convert<T>(input, target_frame, tf_timeout_threshold_);
   }
 
@@ -246,13 +249,15 @@ public:
    *
    * @param _twist       Input twist with valid `header.frame_id` and `stamp`.
    * @param target_frame Target frame id.
-   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero` (latest).
+   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero`
+   * (latest).
    * @return Twist expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  geometry_msgs::msg::TwistStamped convert(
-    const geometry_msgs::msg::TwistStamped & _twist, const std::string & target_frame,
-    const std::chrono::nanoseconds timeout);
+  geometry_msgs::msg::TwistStamped
+  convert(const geometry_msgs::msg::TwistStamped &_twist,
+          const std::string &target_frame,
+          const std::chrono::nanoseconds timeout);
 
   /**
    * @brief Convert a `TwistStamped` to a target frame, using the configured
@@ -268,9 +273,9 @@ public:
    * @return Twist expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  geometry_msgs::msg::TwistStamped convert(
-    const geometry_msgs::msg::TwistStamped & twist, const std::string & target_frame)
-  {
+  geometry_msgs::msg::TwistStamped
+  convert(const geometry_msgs::msg::TwistStamped &twist,
+          const std::string &target_frame) {
     return convert(twist, target_frame, tf_timeout_threshold_);
   }
 
@@ -282,13 +287,14 @@ public:
    *
    * @param _path        Input path. Each pose must carry a valid `frame_id`.
    * @param target_frame Target frame id.
-   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero` (latest).
+   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero`
+   * (latest).
    * @return Path with all poses expressed in `target_frame`.
    * @throw tf2::TransformException if any per-pose lookup fails.
    */
-  nav_msgs::msg::Path convert(
-    const nav_msgs::msg::Path & _path, const std::string & target_frame,
-    const std::chrono::nanoseconds timeout);
+  nav_msgs::msg::Path convert(const nav_msgs::msg::Path &_path,
+                              const std::string &target_frame,
+                              const std::chrono::nanoseconds timeout);
 
   /**
    * @brief Convert a `nav_msgs::msg::Path` to a target frame, using the
@@ -302,10 +308,8 @@ public:
    * @return Path with all poses expressed in `target_frame`.
    * @throw tf2::TransformException if any per-pose lookup fails.
    */
-  nav_msgs::msg::Path convert(
-    const nav_msgs::msg::Path & path,
-    const std::string & target_frame)
-  {
+  nav_msgs::msg::Path convert(const nav_msgs::msg::Path &path,
+                              const std::string &target_frame) {
     return convert(path, target_frame, tf_timeout_threshold_);
   }
 
@@ -325,15 +329,18 @@ public:
    * roll or pitch — which holds for transforms between inertial frames such as
    * `earth ↔ <ns>/odom` in aerostack2 systems.
    *
-   * @param traj         Input trajectory with valid `header.frame_id` and `stamp`.
+   * @param traj         Input trajectory with valid `header.frame_id` and
+   * `stamp`.
    * @param target_frame Target frame id.
-   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero` (latest).
+   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero`
+   * (latest).
    * @return Trajectory expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  as2_msgs::msg::TrajectorySetpoints convert(
-    const as2_msgs::msg::TrajectorySetpoints & traj, const std::string & target_frame,
-    const std::chrono::nanoseconds timeout);
+  as2_msgs::msg::TrajectorySetpoints
+  convert(const as2_msgs::msg::TrajectorySetpoints &traj,
+          const std::string &target_frame,
+          const std::chrono::nanoseconds timeout);
 
   /**
    * @brief Convert an `as2_msgs::msg::TrajectorySetpoints` to a target frame,
@@ -352,14 +359,15 @@ public:
    * roll or pitch — which holds for transforms between inertial frames such as
    * `earth ↔ <ns>/odom` in aerostack2 systems.
    *
-   * @param traj         Input trajectory with valid `header.frame_id` and `stamp`.
+   * @param traj         Input trajectory with valid `header.frame_id` and
+   * `stamp`.
    * @param target_frame Target frame id.
    * @return Trajectory expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  as2_msgs::msg::TrajectorySetpoints convert(
-    const as2_msgs::msg::TrajectorySetpoints & traj, const std::string & target_frame)
-  {
+  as2_msgs::msg::TrajectorySetpoints
+  convert(const as2_msgs::msg::TrajectorySetpoints &traj,
+          const std::string &target_frame) {
     return convert(traj, target_frame, tf_timeout_threshold_);
   }
 
@@ -369,13 +377,15 @@ public:
    * @param target_frame Target frame id.
    * @param source_frame Source frame id.
    * @param time         Lookup time, as `tf2::TimePoint`.
-   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero` (latest).
+   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero`
+   * (latest).
    * @return Pose of `source_frame` expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  geometry_msgs::msg::PoseStamped getPoseStamped(
-    const std::string & target_frame, const std::string & source_frame,
-    const tf2::TimePoint & time, const std::chrono::nanoseconds timeout);
+  geometry_msgs::msg::PoseStamped
+  getPoseStamped(const std::string &target_frame,
+                 const std::string &source_frame, const tf2::TimePoint &time,
+                 const std::chrono::nanoseconds timeout);
 
   /**
    * @brief Obtain a `PoseStamped` from the TF buffer.
@@ -383,13 +393,15 @@ public:
    * @param target_frame Target frame id.
    * @param source_frame Source frame id.
    * @param time         Lookup time, as `rclcpp::Time`.
-   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero` (latest).
+   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero`
+   * (latest).
    * @return Pose of `source_frame` expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  geometry_msgs::msg::PoseStamped getPoseStamped(
-    const std::string & target_frame, const std::string & source_frame,
-    const rclcpp::Time & time, const std::chrono::nanoseconds timeout);
+  geometry_msgs::msg::PoseStamped
+  getPoseStamped(const std::string &target_frame,
+                 const std::string &source_frame, const rclcpp::Time &time,
+                 const std::chrono::nanoseconds timeout);
 
   /**
    * @brief Obtain a `PoseStamped` from the TF buffer using the configured
@@ -402,9 +414,10 @@ public:
    * @return Pose of `source_frame` expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  geometry_msgs::msg::PoseStamped getPoseStamped(
-    const std::string & target_frame, const std::string & source_frame,
-    const tf2::TimePoint & time = tf2::TimePointZero);
+  geometry_msgs::msg::PoseStamped
+  getPoseStamped(const std::string &target_frame,
+                 const std::string &source_frame,
+                 const tf2::TimePoint &time = tf2::TimePointZero);
 
   /**
    * @brief Obtain a `PoseStamped` from the TF buffer using the configured
@@ -416,9 +429,9 @@ public:
    * @return Pose of `source_frame` expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  geometry_msgs::msg::PoseStamped getPoseStamped(
-    const std::string & target_frame, const std::string & source_frame,
-    const rclcpp::Time & time);
+  geometry_msgs::msg::PoseStamped
+  getPoseStamped(const std::string &target_frame,
+                 const std::string &source_frame, const rclcpp::Time &time);
 
   /**
    * @brief Obtain a `QuaternionStamped` (orientation only) from the TF buffer.
@@ -426,13 +439,14 @@ public:
    * @param target_frame Target frame id.
    * @param source_frame Source frame id.
    * @param time         Lookup time, as `tf2::TimePoint`.
-   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero` (latest).
+   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero`
+   * (latest).
    * @return Orientation of `source_frame` expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
   geometry_msgs::msg::QuaternionStamped getQuaternionStamped(
-    const std::string & target_frame, const std::string & source_frame,
-    const tf2::TimePoint & time, const std::chrono::nanoseconds timeout);
+      const std::string &target_frame, const std::string &source_frame,
+      const tf2::TimePoint &time, const std::chrono::nanoseconds timeout);
 
   /**
    * @brief Obtain a `QuaternionStamped` (orientation only) from the TF buffer.
@@ -440,13 +454,14 @@ public:
    * @param target_frame Target frame id.
    * @param source_frame Source frame id.
    * @param time         Lookup time, as `rclcpp::Time`.
-   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero` (latest).
+   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero`
+   * (latest).
    * @return Orientation of `source_frame` expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
   geometry_msgs::msg::QuaternionStamped getQuaternionStamped(
-    const std::string & target_frame, const std::string & source_frame,
-    const rclcpp::Time & time, const std::chrono::nanoseconds timeout);
+      const std::string &target_frame, const std::string &source_frame,
+      const rclcpp::Time &time, const std::chrono::nanoseconds timeout);
 
   /**
    * @brief Obtain a `QuaternionStamped` from the TF buffer using the configured
@@ -459,9 +474,10 @@ public:
    * @return Orientation of `source_frame` expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  geometry_msgs::msg::QuaternionStamped getQuaternionStamped(
-    const std::string & target_frame, const std::string & source_frame,
-    const tf2::TimePoint & time = tf2::TimePointZero);
+  geometry_msgs::msg::QuaternionStamped
+  getQuaternionStamped(const std::string &target_frame,
+                       const std::string &source_frame,
+                       const tf2::TimePoint &time = tf2::TimePointZero);
 
   /**
    * @brief Obtain a `QuaternionStamped` from the TF buffer using the configured
@@ -473,8 +489,10 @@ public:
    * @return Orientation of `source_frame` expressed in `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  geometry_msgs::msg::QuaternionStamped getQuaternionStamped(
-    const std::string & target_frame, const std::string & source_frame, const rclcpp::Time & time);
+  geometry_msgs::msg::QuaternionStamped
+  getQuaternionStamped(const std::string &target_frame,
+                       const std::string &source_frame,
+                       const rclcpp::Time &time);
 
   /**
    * @brief Obtain a `TransformStamped` from the TF buffer.
@@ -491,17 +509,17 @@ public:
    * @return Transform from `source_frame` to `target_frame`.
    * @throw tf2::TransformException if the lookup fails.
    */
-  geometry_msgs::msg::TransformStamped getTransform(
-    const std::string & target_frame, const std::string & source_frame,
-    const tf2::TimePoint & time = tf2::TimePointZero);
+  geometry_msgs::msg::TransformStamped
+  getTransform(const std::string &target_frame, const std::string &source_frame,
+               const tf2::TimePoint &time = tf2::TimePointZero);
 
   /**
    * @brief Obtain a `TransformStamped` from the TF buffer, blocking up to
    *        `timeout` for the transform to become available.
    *
    * Uses the timeout-bearing two-frame
-   * `lookupTransform(target, source, time, timeout)` overload of `tf2_ros::Buffer`,
-   * without a fixed frame.
+   * `lookupTransform(target, source, time, timeout)` overload of
+   * `tf2_ros::Buffer`, without a fixed frame.
    *
    * @param target_frame Target frame id.
    * @param source_frame Source frame id.
@@ -511,9 +529,10 @@ public:
    * @return Transform from `source_frame` to `target_frame`.
    * @throw tf2::TransformException if the lookup fails or the timeout expires.
    */
-  geometry_msgs::msg::TransformStamped getTransform(
-    const std::string & target_frame, const std::string & source_frame,
-    const tf2::TimePoint & time, const std::chrono::nanoseconds timeout);
+  geometry_msgs::msg::TransformStamped
+  getTransform(const std::string &target_frame, const std::string &source_frame,
+               const tf2::TimePoint &time,
+               const std::chrono::nanoseconds timeout);
 
   /**
    * @brief Try to convert `input` in place to a target frame.
@@ -524,19 +543,19 @@ public:
    *
    * @param input        Variable to convert (modified in place on success).
    * @param target_frame Target frame id.
-   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero` (latest).
+   * @param timeout      Lookup timeout. Zero uses `tf2::TimePointZero`
+   * (latest).
    * @return `true` if the conversion was successful, `false` otherwise.
    */
-  template<typename T>
-  bool tryConvert(
-    T & input, const std::string & target_frame,
-    const std::chrono::nanoseconds timeout)
-  {
+  template <typename T>
+  bool tryConvert(T &input, const std::string &target_frame,
+                  const std::chrono::nanoseconds timeout) {
     try {
       input = convert(input, target_frame, timeout);
       return true;
-    } catch (const tf2::TransformException & ex) {
-      RCLCPP_WARN(node_->get_logger(), "Could not get transform: %s", ex.what());
+    } catch (const tf2::TransformException &ex) {
+      RCLCPP_WARN(node_->get_logger(), "Could not get transform: %s",
+                  ex.what());
       return false;
     }
   }
@@ -553,9 +572,8 @@ public:
    * @param target_frame Target frame id.
    * @return `true` if the conversion was successful, `false` otherwise.
    */
-  template<typename T>
-  bool tryConvert(T & input, const std::string & target_frame)
-  {
+  template <typename T>
+  bool tryConvert(T &input, const std::string &target_frame) {
     return tryConvert(input, target_frame, tf_timeout_threshold_);
   }
 
@@ -568,7 +586,8 @@ public:
    *  2. Look up the pose of `_pose_source_frame` in `_pose_target_frame`,
    *     stamped at the converted twist's `header.stamp`.
    *
-   * @param _twist               Input twist with valid `header.frame_id` and `stamp`.
+   * @param _twist               Input twist with valid `header.frame_id` and
+   * `stamp`.
    * @param _twist_target_frame  Frame in which the output twist is expressed.
    * @param _pose_target_frame   Target frame for the pose lookup.
    * @param _pose_source_frame   Source frame for the pose lookup.
@@ -577,10 +596,12 @@ public:
    *         and the twist in `_twist_target_frame`.
    * @throw tf2::TransformException if any of the two lookups fails.
    */
-  std::pair<geometry_msgs::msg::PoseStamped, geometry_msgs::msg::TwistStamped> getState(
-    const geometry_msgs::msg::TwistStamped & _twist, const std::string & _twist_target_frame,
-    const std::string & _pose_target_frame, const std::string & _pose_source_frame,
-    const std::chrono::nanoseconds timeout);
+  std::pair<geometry_msgs::msg::PoseStamped, geometry_msgs::msg::TwistStamped>
+  getState(const geometry_msgs::msg::TwistStamped &_twist,
+           const std::string &_twist_target_frame,
+           const std::string &_pose_target_frame,
+           const std::string &_pose_source_frame,
+           const std::chrono::nanoseconds timeout);
 
   /**
    * @brief Build a (pose, twist) pair expressed in the requested frames, using
@@ -592,7 +613,8 @@ public:
    *  2. Look up the pose of `_pose_source_frame` in `_pose_target_frame`,
    *     stamped at the converted twist's `header.stamp`.
    *
-   * @param _twist               Input twist with valid `header.frame_id` and `stamp`.
+   * @param _twist               Input twist with valid `header.frame_id` and
+   * `stamp`.
    * @param _twist_target_frame  Frame in which the output twist is expressed.
    * @param _pose_target_frame   Target frame for the pose lookup.
    * @param _pose_source_frame   Source frame for the pose lookup.
@@ -600,11 +622,13 @@ public:
    *         and the twist in `_twist_target_frame`.
    * @throw tf2::TransformException if any of the two lookups fails.
    */
-  std::pair<geometry_msgs::msg::PoseStamped, geometry_msgs::msg::TwistStamped> getState(
-    const geometry_msgs::msg::TwistStamped & _twist, const std::string & _twist_target_frame,
-    const std::string & _pose_target_frame, const std::string & _pose_source_frame);
-};  // class TfHandler
+  std::pair<geometry_msgs::msg::PoseStamped, geometry_msgs::msg::TwistStamped>
+  getState(const geometry_msgs::msg::TwistStamped &_twist,
+           const std::string &_twist_target_frame,
+           const std::string &_pose_target_frame,
+           const std::string &_pose_source_frame);
+}; // class TfHandler
 
-}  // namespace tf
-}  // namespace as2
-#endif  // AS2_CORE__UTILS__TF_UTILS_HPP_
+} // namespace tf
+} // namespace as2
+#endif // AS2_CORE__UTILS__TF_UTILS_HPP_

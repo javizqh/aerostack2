@@ -29,13 +29,8 @@
 #ifndef AS2_CORE__CUSTOM__CV_BRIDGE_HPP_
 #define AS2_CORE__CUSTOM__CV_BRIDGE_HPP_
 
-#cmakedefine ROS_DISTRO @ROS_DISTRO@
-#cmakedefine ROS_JAZZY
+#cmakedefine ROS_DISTRO @ROS_DISTRO @
 
-#ifdef ROS_JAZZY
 #include <cv_bridge/cv_bridge.hpp>
-#else
-#include <cv_bridge/cv_bridge.h>
-#endif
 
-#endif  // AS2_CORE__CUSTOM__CV_BRIDGE_HPP_
+#endif // AS2_CORE__CUSTOM__CV_BRIDGE_HPP_
