@@ -22,7 +22,6 @@ set(PROJECT_DEPENDENCIES
   rclcpp
   as2_core
   as2_msgs
-  as2_gazebo_assets
   geometry_msgs
 )
 foreach(DEPENDENCY ${PROJECT_DEPENDENCIES})
@@ -46,7 +45,6 @@ target_link_libraries(${PROJECT_NAME}_node
   rclcpp::rclcpp
   as2_core::as2_core
   as2_msgs::as2_msgs
-  as2_gazebo_assets::as2_gazebo_assets
   geometry_msgs::geometry_msgs
 )
 
@@ -57,7 +55,6 @@ target_link_libraries(${PROJECT_NAME}
   rclcpp::rclcpp
   as2_core::as2_core
   as2_msgs::as2_msgs
-  as2_gazebo_assets::as2_gazebo_assets
   geometry_msgs::geometry_msgs
 )
 
