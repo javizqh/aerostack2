@@ -38,8 +38,8 @@ else()
   include(FetchContent)
   fetchcontent_declare(
     multirotor_simulator
-    GIT_REPOSITORY https://github.com/RPS98/multirotor_simulator.git
-    GIT_TAG v2.0
+    GIT_REPOSITORY https://github.com/javizqh/multirotor_simulator.git
+    GIT_TAG v3.0
   )
   fetchcontent_makeavailable(multirotor_simulator)
 endif()

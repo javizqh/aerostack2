@@ -52,8 +52,8 @@ else()
     include(FetchContent)
     fetchcontent_declare(
       pid_controller
-      GIT_REPOSITORY https://github.com/RPS98/pid_controller.git
-      GIT_TAG v1.0
+      GIT_REPOSITORY https://github.com/javizqh/pid_controller.git
+      GIT_TAG v1.1
       SOURCE_DIR ${LOCAL_PID_SRC}
     )
     fetchcontent_makeavailable(pid_controller)

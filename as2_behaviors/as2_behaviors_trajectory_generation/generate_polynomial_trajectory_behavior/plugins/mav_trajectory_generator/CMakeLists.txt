@@ -92,8 +92,8 @@ else()
     include(FetchContent)
     fetchcontent_declare(
       mav_trajectory_generation_cpp
-      GIT_REPOSITORY https://github.com/aerostack2/mav_trajectory_generation_lib.git
-      GIT_TAG v1.0
+      GIT_REPOSITORY https://github.com/javizqh/mav_trajectory_generation_lib.git
+      GIT_TAG v1.1
       SOURCE_DIR ${LOCAL_MTG_SRC}
     )
     fetchcontent_makeavailable(mav_trajectory_generation_cpp)
