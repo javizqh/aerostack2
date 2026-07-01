@@ -16,21 +16,21 @@ set(GZ_VERSION "fortress")
 
 # check if harmonic libs are available
 find_package(gz-common5 QUIET)
-if(gz-common5_FOUND)
-  set(GZ_VERSION "harmonic")
+if(gz-common7_FOUND)
+  set(GZ_VERSION "jetty")
 endif()
 
 message("Using GAZEBO version: ${GZ_VERSION}")
 
-if( ${GZ_VERSION} STREQUAL "harmonic" )
+if( ${GZ_VERSION} STREQUAL "jetty" )
 
-set(GZ_SIM "gz-sim8")
-set(GZ_COMMON "gz-common5")
-set(GZ_MATH "gz-math7")
-set(GZ_TRANSPORT "gz-transport13")
-set(GZ_PLUGIN "gz-plugin2")
-set(GZ_RENDERING "gz-rendering8")
-set(GZ_MSGS "gz-msgs10")
+set(GZ_SIM "gz-sim10")
+set(GZ_COMMON "gz-common7")
+set(GZ_MATH "gz-math9")
+set(GZ_TRANSPORT "gz-transport15")
+set(GZ_PLUGIN "gz-plugin4")
+set(GZ_RENDERING "gz-rendering10")
+set(GZ_MSGS "gz-msgs12")
 
 elseif( ${GZ_VERSION} STREQUAL "fortress" )
 
