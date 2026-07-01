@@ -12,7 +12,7 @@ set(GZ_VERSION "jetty")
 
 message("Using GAZEBO version: ${GZ_VERSION}")
 
-set(GZ_SIM "gz-sim10")
+set(GZ_SIM "gz-sim10-cli")
 set(GZ_COMMON "gz-common7")
 set(GZ_MATH "gz-math9")
 set(GZ_TRANSPORT "gz-transport15")
