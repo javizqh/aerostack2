@@ -43,6 +43,7 @@
 
 #include "as2_core/node.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include <rclcpp/qos.hpp>
 
 namespace as2 {
 
@@ -77,7 +78,7 @@ public:
     // BUG: remove QoS rmw_qos_profile_services_default -> causes compilation
     // error
     service_client_ =
-        node_->create_client<ServiceT>(service_name, callback_group_);
+        node_->create_client<ServiceT>(service_name, 10, callback_group_);
   }
 
   /**
